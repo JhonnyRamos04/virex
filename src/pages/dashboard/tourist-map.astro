@@ -1,0 +1,160 @@
+---
+/**
+ * Tourist Map Page - Interactive destination map
+ *
+ * @description
+ * Shows an interactive map with tourist points of interest and routes
+ */
+import DashboardLayout from '@/layouts/DashboardLayout.astro';
+import { DestinationMap } from '@/components/dashboard-ui/DestinationMap';
+---
+
+<DashboardLayout
+  title="Mapa Turístico"
+  description="Explora paradas turísticas"
+  breadcrumbs={[
+    { label: 'Panel', href: '/dashboard' },
+    { label: 'Mapa Turístico' }
+  ]}
+>
+  <div class="map-page">
+    <div class="page-header">
+      <h1 class="page-title">Explorador de Destinos</h1>
+      <p class="page-description">
+        Descubre paradas turísticas, monumentos y rutas recomendadas para tus viajes.
+      </p>
+    </div>
+
+    <div class="map-container">
+      <DestinationMap client:only="react" />
+    </div>
+  </div>
+</DashboardLayout>
+
+<style>
+  .map-page {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  /* Page Header */
+  .page-header {
+    margin-bottom: 0.5rem;
+  }
+
+  .page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0 0 0.5rem 0;
+    line-height: 1.2;
+  }
+
+  .page-description {
+    font-size: 1rem;
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+
+  /* POI Section */
+  .poi-section {
+    padding: 1.5rem;
+    background: var(--color-surface, #fff);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg, 1rem);
+  }
+
+  .poi-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0 0 1.5rem 0;
+  }
+
+  .poi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+
+  .poi-card {
+    padding: 1.25rem;
+    background: var(--color-background, #f9fafb);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md, 0.5rem);
+    transition: all 150ms ease;
+  }
+
+  .poi-card:hover {
+    background: var(--color-surface, #fff);
+    border-color: var(--color-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .poi-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .poi-icon {
+    width: 2rem;
+    height: 2rem;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: white;
+    font-weight: 700;
+    font-size: 0.875rem;
+  }
+
+  .poi-number {
+    line-height: 1;
+  }
+
+  .poi-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .poi-description {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    margin: 0 0 0.75rem 0;
+    line-height: 1.5;
+  }
+
+  .poi-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .poi-type {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.625rem;
+    background: var(--color-surface, #fff);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full, 9999px);
+    color: var(--color-text-muted);
+  }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .page-title {
+      font-size: 1.75rem;
+    }
+
+    .poi-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

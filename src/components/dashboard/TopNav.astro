@@ -22,7 +22,8 @@
 
 import { Icon } from 'astro-icon/components';
 import ThemeToggle from '../ui/ThemeToggle.astro';
-import UserMenu from './UserMenu.astro';
+import { AuthProvider } from '@/contexts/AuthContext';
+import { UserProfile } from '@/components/auth/UserProfile';
 ---
 
 <header class="top-nav">
@@ -31,39 +32,23 @@ import UserMenu from './UserMenu.astro';
     <button
       type="button"
       id="mobile-menu-button"
-      aria-label="Open navigation menu"
+      aria-label="Abrir menú de navegación"
       aria-expanded="false"
-      class="mobile-menu-btn md:hidden p-2 rounded-md hover:bg-surface transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      class="mobile-menu-btn md:hidden p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400"
     >
-      <Icon name="lucide:menu" class="w-6 h-6 text-text" />
+      <Icon name="lucide:menu" class="w-6 h-6 text-zinc-900 dark:text-white" />
     </button>
 
-    <!-- Search Input -->
-    <div class="search-container">
-      <div class="search-wrapper">
-        <Icon name="lucide:search" class="search-icon w-5 h-5 text-text-muted" />
-        <input type="search" placeholder="Search..." aria-label="Search" class="search-input" />
-      </div>
-    </div>
-
     <!-- Right Side Actions -->
-    <div class="actions-container">
-      <!-- Notifications Button -->
-      <button
-        type="button"
-        aria-label="Notifications"
-        class="notification-btn p-2 rounded-md hover:bg-surface transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background relative"
-      >
-        <Icon name="lucide:bell" class="w-5 h-5 text-text" />
-        <!-- Badge Indicator -->
-        <span class="notification-badge" aria-label="3 unread notifications"> 3 </span>
-      </button>
+    <div class="actions-container">   
 
       <!-- Theme Toggle -->
       <ThemeToggle />
 
-      <!-- User Menu -->
-      <UserMenu />
+      <!-- User Profile (Authenticated) -->
+      <AuthProvider client:only="react">
+          <UserProfile client:only="react" />
+      </AuthProvider>
     </div>
   </div>
 </header>
@@ -132,8 +117,8 @@ import UserMenu from './UserMenu.astro';
 
   .search-input:focus {
     outline: none;
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px oklch(from var(--color-primary) l c h / 0.1);
+    border-color: var(--color-gray-400);
+    box-shadow: 0 0 0 3px oklch(from var(--color-gray-400) l c h / 0.1);
   }
 
   /* Actions Container */

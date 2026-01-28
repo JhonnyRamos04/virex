@@ -1,7 +1,7 @@
 ---
-quote: "The preview deployments feature alone is worth it. Every PR gets its own URL, and our design team can review changes without setting up anything locally."
+quote: "La experiencia fue increíble, la atencion y el trato que me dieron fue perfecto"
 author: "Priya Sharma"
-role: "Engineering Lead"
+role: "Cliente"
 company: "DesignFlow"
 avatar: "/images/testimonials/priya-sharma.webp"
 featured: false

@@ -1,0 +1,237 @@
+---
+export interface Props {
+  destinations: Array<{
+    id: number;
+    titulo: string;
+    descripcion: string;
+    precio: number;
+    imagen_url: string;
+    disponible: boolean;
+  }>;
+}
+
+const { destinations } = Astro.props;
+---
+
+<section id="viajes" class="py-20 bg-white dark:bg-surface relative">
+  <div class="container mx-auto px-6">
+    <!-- Header Minimalista -->
+    <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+      <div class="max-w-xl">
+        <h2 class="text-3xl md:text-4xl font-light text-gray-600 mb-2 tracking-tight">
+          Próximos Destinos
+        </h2>
+        <p class="text-gray-600 font-light">
+          Selección exclusiva para tu próxima escapada.
+        </p>
+      </div>
+      
+      <!-- Controles -->
+      <div class="flex gap-2">
+        <button id="carousel-prev" class="p-2 rounded-full border border-gray-200 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 transition-colors disabled:opacity-30">
+          <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"></path></svg>
+        </button>
+        <button id="carousel-next" class="p-2 rounded-full border border-gray-200 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 transition-colors disabled:opacity-30">
+          <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"></path></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Carousel Viewport -->
+    <div class="overflow-hidden">
+      <div 
+        id="carousel-track" 
+        class="flex gap-6 transition-transform duration-500 ease-out"
+      >
+        {
+          destinations.map((destino) => (
+            <div 
+              class="w-full md:w-[45%] lg:w-[30%] shrink-0 flex flex-col group cursor-pointer"
+              onclick="window.redirectToLogin()"
+            >
+              
+              <!-- Imagen -->
+              <div class="relative overflow-hidden rounded-xl bg-gray-100 aspect-4/3 mb-4">
+                <img 
+                  src={destino.imagen_url} 
+                  alt={destino.titulo}
+                  class={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${!destino.disponible && 'grayscale opacity-60'}`}
+                  loading="lazy"
+                />
+                {!destino.disponible && (
+                  <div class="absolute inset-0 flex items-center justify-center bg-white/30 backdrop-blur-sm">
+                    <span class="text-xs font-bold uppercase tracking-widest text-gray-800 bg-white px-3 py-1 rounded-full">Agotado</span>
+                  </div>
+                )}
+              </div>
+
+              <!-- Info -->
+              <div class="flex flex-col gap-1">
+                <div class="flex justify-between items-start">
+                  <h3 class="text-xl font-medium text-gray-600 group-hover:text-primary transition-colors">
+                    {destino.titulo}
+                  </h3>
+                  <div class="flex flex-col items-end">
+                     <span class="text-lg font-semibold text-gray-700">${destino.precio}</span>
+                  </div>
+                </div>
+                
+                <p class="text-sm text-gray-700 line-clamp-2 leading-relaxed">
+                  {destino.descripcion}
+                </p>
+
+                <div class="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800 flex justify-between items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <span class="text-sm font-medium text-primary dark:text-primary">Iniciar sesión para reservar</span>
+                  <svg class="w-4 h-4 text-primary dark:text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                </div>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // === LÓGICA DEL CARRUSEL INFINITO CON CLONES ===
+  const track = document.getElementById('carousel-track');
+  const prevBtn = document.getElementById('carousel-prev');
+  const nextBtn = document.getElementById('carousel-next');
+  let currentSlide = 0;
+  let isTransitioning = false;
+  let totalSlides = 0;
+  let slideWidth = 0;
+  let gap = 12;
+  
+  function initializeCarousel() {
+    if (!track) return;
+    const items = track.children;
+    if (items.length === 0) return;
+    
+    // Guardar número original de slides
+    const originalSlides = items.length;
+    totalSlides = originalSlides;
+    
+    // Calcular ancho de slide
+    slideWidth = items[0].clientWidth;
+    
+    // Crear clones para el efecto infinito
+    // Clonar primeros slides para el final
+    for (let i = 0; i < Math.min(3, originalSlides); i++) {
+      const clone = items[i].cloneNode(true);
+      track.appendChild(clone);
+    }
+    
+    // Clonar últimos slides para el inicio
+    for (let i = originalSlides - Math.min(3, originalSlides); i < originalSlides; i++) {
+      const clone = items[i].cloneNode(true);
+      track.insertBefore(clone, track.firstChild);
+    }
+    
+    // Posicionar en el primer slide real (después de los clones del inicio)
+    currentSlide = Math.min(3, originalSlides);
+    updateCarousel(true);
+  }
+  
+  function updateCarousel(instant = false) {
+    if (!track) return;
+    
+    const moveAmount = slideWidth + gap;
+    
+    // Aplicar transición suave o instantánea
+    if (instant) {
+      track.style.transition = 'none';
+    } else {
+      track.style.transition = 'transform 0.5s ease-out';
+    }
+    
+    track.style.transform = `translateX(-${currentSlide * moveAmount}px)`;
+  }
+
+  function goToNextSlide() {
+    if (isTransitioning) return;
+    
+    const items = track?.children;
+    if (!items || items.length === 0) return;
+    
+    currentSlide++;
+    updateCarousel();
+    
+    // Verificar si necesitamos hacer el salto infinito
+    const maxRealSlide = totalSlides + Math.min(3, totalSlides) - 1;
+    if (currentSlide > maxRealSlide) {
+      isTransitioning = true;
+      
+      setTimeout(() => {
+        currentSlide = Math.min(3, totalSlides);
+        updateCarousel(true);
+        isTransitioning = false;
+      }, 500);
+    }
+  }
+
+  function goToPrevSlide() {
+    if (isTransitioning) return;
+    
+    const items = track?.children;
+    if (!items || items.length === 0) return;
+    
+    currentSlide--;
+    updateCarousel();
+    
+    // Verificar si necesitamos hacer el salto infinito
+    const minRealSlide = Math.min(3, totalSlides);
+    if (currentSlide < minRealSlide) {
+      isTransitioning = true;
+      
+      setTimeout(() => {
+        currentSlide = totalSlides + Math.min(3, totalSlides) - 1;
+        updateCarousel(true);
+        isTransitioning = false;
+      }, 500);
+    }
+  }
+
+  // Inicializar cuando el DOM esté listo
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeCarousel);
+  } else {
+    initializeCarousel();
+  }
+
+  prevBtn?.addEventListener('click', goToPrevSlide);
+  nextBtn?.addEventListener('click', goToNextSlide);
+  window.addEventListener('resize', () => {
+    // Re-inicializar en resize para recalcular dimensiones
+    initializeCarousel();
+  });
+
+  // Auto-play opcional (cada 5 segundos)
+  let autoPlayInterval: ReturnType<typeof setInterval>;
+  
+  function startAutoPlay() {
+    autoPlayInterval = setInterval(goToNextSlide, 5000);
+  }
+  
+  function stopAutoPlay() {
+    clearInterval(autoPlayInterval);
+  }
+  
+  // Iniciar auto-play y pausar en hover
+  setTimeout(startAutoPlay, 1000); // Pequeño delay para asegurar que esté inicializado
+  
+  track?.addEventListener('mouseenter', stopAutoPlay);
+  track?.addEventListener('mouseleave', startAutoPlay);
+  
+  // Pausar auto-play cuando el usuario interactúa con los botones
+  prevBtn?.addEventListener('mouseenter', stopAutoPlay);
+  prevBtn?.addEventListener('mouseleave', startAutoPlay);
+  nextBtn?.addEventListener('mouseenter', stopAutoPlay);
+  nextBtn?.addEventListener('mouseleave', startAutoPlay);
+
+  // REDIRECT TO LOGIN ON CLICK
+  window.redirectToLogin = () => {
+    window.location.href = '/login';
+  };
+</script>

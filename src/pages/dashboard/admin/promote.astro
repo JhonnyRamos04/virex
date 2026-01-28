@@ -1,0 +1,96 @@
+---
+/**
+ * Admin Promotion Page
+ *
+ * @description
+ * Interface for promoting users to admin status.
+ */
+import DashboardLayout from '@/layouts/DashboardLayout.astro';
+import { Icon } from 'astro-icon/components';
+---
+
+<DashboardLayout
+  title="Gestión de Administradores"
+  description="Control de accesos"
+  breadcrumbs={[
+    { label: 'Panel', href: '/dashboard' },
+    { label: 'Admin', href: '/dashboard/admin' },
+    { label: 'Promover' }
+  ]}
+>
+  <div class="max-w-xl mx-auto mt-10">
+    <div class="bg-surface border border-border rounded-xl p-8 shadow-sm">
+      <div class="flex items-center gap-4 mb-6">
+        <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+          <Icon name="lucide:shield-check" class="w-6 h-6" />
+        </div>
+        <div>
+          <h1 class="text-xl font-bold text-text">Promover Administrador</h1>
+          <p class="text-sm text-text-muted">Otorga permisos de superusuario</p>
+        </div>
+      </div>
+
+      <form id="promote-form" class="space-y-4">
+        <div>
+          <label for="email" class="block text-sm font-medium text-text mb-1">Email del Usuario</label>
+          <input type="email" id="email" name="email" required placeholder="usuario@ejemplo.com" class="w-full rounded-lg border-border bg-background px-3 py-2 text-text focus:ring-2 focus:ring-primary outline-none transition-all" />
+        </div>
+        
+        <div>
+          <label for="secret" class="block text-sm font-medium text-text mb-1">Clave Secreta de Admin</label>
+          <input type="password" id="secret" name="secret" required placeholder="Ingresa la clave maestra" class="w-full rounded-lg border-border bg-background px-3 py-2 text-text focus:ring-2 focus:ring-primary outline-none transition-all" />
+        </div>
+
+        <button type="submit" id="btn-submit" class="w-full bg-primary text-white font-semibold py-2.5 rounded-lg hover:bg-primary-dark transition-colors flex justify-center items-center gap-2">
+          <Icon name="lucide:user-plus" class="w-4 h-4" />
+          Promover Usuario
+        </button>
+        
+        <div id="feedback" class="text-center text-sm font-medium hidden mt-4"></div>
+      </form>
+    </div>
+  </div>
+</DashboardLayout>
+
+<script>
+  const form = document.getElementById('promote-form');
+  const feedback = document.getElementById('feedback');
+  const btn = document.getElementById('btn-submit');
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!feedback || !btn) return;
+    
+    const originalText = btn.innerHTML;
+    btn.innerHTML = 'Procesando...';
+    btn.disabled = true;
+    feedback.classList.add('hidden');
+    
+    const formData = new FormData(form as HTMLFormElement);
+    const payload = Object.fromEntries(formData);
+
+    try {
+      const res = await fetch('http://localhost:8000/api/admin/promote/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      
+      const data = await res.json();
+      
+      if (res.ok) {
+        feedback.textContent = '¡Usuario promovido correctamente!';
+        feedback.className = 'text-center text-sm font-medium text-green-600 mt-4 block';
+        (form as HTMLFormElement).reset();
+      } else {
+        throw new Error(data.error || 'Error desconocido');
+      }
+    } catch (err) {
+      feedback.textContent = err.message;
+      feedback.className = 'text-center text-sm font-medium text-red-600 mt-4 block';
+    } finally {
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+    }
+  });
+</script>

@@ -1,0 +1,39 @@
+---
+/**
+ * Admin Destinations Dashboard
+ *
+ * @description
+ * Interface for adding new destinations and managing tourist stops.
+ */
+import DashboardLayout from '@/layouts/DashboardLayout.astro';
+---
+
+<DashboardLayout
+  title="Gestión de Destinos"
+  description="Administrar contenido"
+  breadcrumbs={[
+    { label: 'Panel', href: '/dashboard' },
+    { label: 'Admin', href: '/dashboard/admin' },
+    { label: 'Destinos' }
+  ]}
+>
+  <div class="admin-page">
+     <div class="page-header mb-8">
+      <h1 class="text-3xl font-bold text-text mb-2">Gestión de Destinos</h1>
+      <p class="text-text-muted">Agrega nuevos destinos y paradas turísticas.</p>
+    </div>
+    
+    <div id="admin-destination-root"></div>
+  </div>
+</DashboardLayout>
+
+<script>
+  import React from 'react';
+  import { createRoot } from 'react-dom/client';
+  import { AdminDestinationManager } from '@/components/admin/AdminDestinationManager';
+
+  const root = document.getElementById('admin-destination-root');
+  if (root) {
+    createRoot(root).render(React.createElement(AdminDestinationManager));
+  }
+</script>

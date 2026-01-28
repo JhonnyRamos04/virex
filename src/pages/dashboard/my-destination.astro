@@ -1,0 +1,32 @@
+---
+/**
+ * My Destination Page - Current booked destination
+ *
+ * @description
+ * Shows detailed information about the user's currently booked destination,
+ * including trip details, status, and important information.
+ */
+import DashboardLayout from '@/layouts/DashboardLayout.astro';
+import { ReservationList } from '@/components/dashboard/ReservationList';
+---
+
+<DashboardLayout
+  title="Mi Destino"
+  description="Tu próxima aventura"
+  breadcrumbs={[
+    { label: 'Panel', href: '/dashboard' },
+    { label: 'Mi Destino' }
+  ]}
+>
+  <div class="destination-page">
+    <!-- Page Header -->
+    <div class="page-header mb-8">
+      <h1 class="text-3xl font-bold text-text mb-2">Mi Destino Reservado</h1>
+      <p class="text-text-muted">
+        Detalles de tu próximo viaje y toda la información importante.
+      </p>
+    </div>
+
+    <ReservationList client:only="react" />
+  </div>
+</DashboardLayout>

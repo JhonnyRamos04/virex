@@ -1,7 +1,7 @@
 ---
-quote: "As a solo founder, I don't have time to manage infrastructure. Virex handles everything so I can focus on building features my customers actually want."
+quote: "La funcion de agenda me encanto, me facilito mucho la vida"
 author: "Emma Chen"
-role: "Founder"
+role: "Cliente"
 company: "Indie Labs"
 avatar: "/images/testimonials/emma-chen.webp"
 featured: false

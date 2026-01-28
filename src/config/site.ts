@@ -9,17 +9,17 @@
 import type { SocialLinks, LegalConfig } from '../lib/types';
 
 /** Site name displayed in header, footer, and meta tags */
-export const name = import.meta.env.SITE_NAME || 'Virex';
+export const name = import.meta.env.SITE_NAME || 'GoFlowTrips';
 
 /** Site description for SEO and meta tags */
 export const description =
-  import.meta.env.SITE_DESCRIPTION || 'The modern platform for building and shipping faster';
+  import.meta.env.SITE_DESCRIPTION || 'Tu plataforma de confianza para descubrir y reservar los mejores destinos de viaje';
 
 /** Production URL of your site (used for sitemap, RSS, canonical URLs) */
 export const url = import.meta.env.SITE_URL || 'http://localhost:4321';
 
 /** Author name for meta tags and copyright */
-export const author = import.meta.env.SITE_AUTHOR || 'Virex Team';
+export const author = import.meta.env.SITE_AUTHOR || 'GoFlowTrips Team';
 
 /** Path to logo file (relative to /public) */
 export const logo = '/logo.svg';
@@ -29,14 +29,14 @@ export const ogImage = '/images/og-image.png';
 
 /** Social media links */
 export const social: SocialLinks = {
-  twitter: 'https://twitter.com/virex',
-  github: 'https://github.com/virex',
-  discord: 'https://discord.gg/virex',
+  twitter: 'https://twitter.com/goflowtrips',
+  github: 'https://github.com/goflowtrips',
+  discord: 'https://discord.gg/goflowtrips',
 };
 
 /** Legal configuration for privacy policy and terms pages */
 export const legal: LegalConfig = {
-  privacyEmail: 'privacy@virex.example.com',
-  legalEmail: 'legal@virex.example.com',
-  lastUpdated: 'December 17, 2024',
+  privacyEmail: 'privacidad@goflowtrips.com',
+  legalEmail: 'legal@goflowtrips.com',
+  lastUpdated: '14 de enero de 2026',
 };

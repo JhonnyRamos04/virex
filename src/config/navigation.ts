@@ -19,17 +19,17 @@ export const navigation: Navigation = {
    */
   header: {
     main: [
-      { label: 'Features', href: '/features' },
-      { label: 'Pricing', href: '/pricing' },
+      { label: 'Funcionalidades', href: '/features' },
+      { label: 'Precios', href: '/pricing' },
       { label: 'Demo', href: '/dashboard' },
-      { label: 'Customers', href: '/customers' },
-      { label: 'Enterprise', href: '/enterprise' },
-      { label: 'Docs', href: '/docs', feature: 'docs' },
+      { label: 'Clientes', href: '/customers' },
+      { label: 'Empresas', href: '/enterprise' },
+      { label: 'Documentación', href: '/docs', feature: 'docs' },
       { label: 'Blog', href: '/blog', feature: 'blog' },
     ],
     cta: [
-      { label: 'Login', href: '/login', variant: 'ghost' },
-      { label: 'Get Started', href: '/register', variant: 'primary' },
+      { label: 'Iniciar Sesión', href: '/login', variant: 'ghost' },
+      { label: 'Empezar', href: '/register', variant: 'primary' },
     ],
   },
 
@@ -39,33 +39,33 @@ export const navigation: Navigation = {
    */
   footer: {
     product: [
-      { label: 'Features', href: '/features' },
-      { label: 'Integrations', href: '/integrations' },
-      { label: 'Security', href: '/security' },
-      { label: 'Pricing', href: '/pricing' },
-      { label: 'FAQ', href: '/faq' },
+      { label: 'Destinos Populares', href: '/destinos' },
+      { label: 'Ofertas Especiales', href: '/ofertas' },
+      { label: 'Seguro de Viaje', href: '/seguro' },
+      { label: 'Precios', href: '/precios' },
+      { label: 'Preguntas Frecuentes', href: '/faq' },
     ],
     solutions: [
-      { label: 'Enterprise', href: '/enterprise' },
-      { label: 'Customers', href: '/customers' },
-      { label: 'Request Demo', href: '/demo' },
-      { label: 'Status', href: '/status' },
+      { label: 'Viajes Corporativos', href: '/empresas' },
+      { label: 'Grupos', href: '/grupos' },
+      { label: 'Luna de Miel', href: '/luna-de-miel' },
+      { label: 'Aventura', href: '/aventura' },
     ],
     resources: [
-      { label: 'Documentation', href: '/docs', feature: 'docs' },
-      { label: 'Blog', href: '/blog', feature: 'blog' },
-      { label: 'Changelog', href: '/changelog', feature: 'changelog' },
-      { label: 'Roadmap', href: '/roadmap', feature: 'roadmap' },
+      { label: 'Guía de Viaje', href: '/guia', feature: 'docs' },
+      { label: 'Blog de Viajes', href: '/blog', feature: 'blog' },
+      { label: 'Novedades', href: '/novedades', feature: 'changelog' },
+      { label: 'Mapa de Sitio', href: '/mapa', feature: 'roadmap' },
     ],
     company: [
-      { label: 'About', href: '/about' },
-      { label: 'Careers', href: '/careers' },
-      { label: 'Contact', href: '/contact' },
-      { label: 'Testimonials', href: '/testimonials', feature: 'testimonials' },
+      { label: 'Sobre Nosotros', href: '/about' },
+      { label: 'Carreras', href: '/careers' },
+      { label: 'Contacto', href: '/contact' },
+      { label: 'Testimonios', href: '/testimonios', feature: 'testimonials' },
     ],
     legal: [
-      { label: 'Privacy', href: '/privacy' },
-      { label: 'Terms', href: '/terms' },
+      { label: 'Privacidad', href: '/privacy' },
+      { label: 'Términos', href: '/terms' },
     ],
   },
 };

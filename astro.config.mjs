@@ -5,6 +5,8 @@ import icon from 'astro-icon';
 import tailwindcss from '@tailwindcss/vite';
 import { siteConfig } from './src/config';
 
+import react from '@astrojs/react';
+
 // Site URL from environment variable with localhost fallback
 const siteUrl = process.env.SITE_URL || 'http://localhost:4321';
 
@@ -28,25 +30,20 @@ function envCheckIntegration() {
 
 export default defineConfig({
   site: siteUrl,
-  integrations: [
-    mdx(),
-    icon(),
-    envCheckIntegration(),
-    sitemap({
-      filter: (page) => {
-        const { features } = siteConfig;
+  integrations: [mdx(), icon(), envCheckIntegration(), sitemap({
+    filter: (page) => {
+      const { features } = siteConfig;
 
-        // Filter out pages based on feature flags
-        if (!features.blog && page.includes('/blog')) return false;
-        if (!features.docs && page.includes('/docs')) return false;
-        if (!features.changelog && page.includes('/changelog')) return false;
-        if (!features.testimonials && page.includes('/testimonials')) return false;
-        if (!features.roadmap && page.includes('/roadmap')) return false;
+      // Filter out pages based on feature flags
+      if (!features.blog && page.includes('/blog')) return false;
+      if (!features.docs && page.includes('/docs')) return false;
+      if (!features.changelog && page.includes('/changelog')) return false;
+      if (!features.testimonials && page.includes('/testimonials')) return false;
+      if (!features.roadmap && page.includes('/roadmap')) return false;
 
-        return true;
-      },
-    }),
-  ],
+      return true;
+    },
+  }), react()],
   vite: {
     plugins: [tailwindcss()],
   },

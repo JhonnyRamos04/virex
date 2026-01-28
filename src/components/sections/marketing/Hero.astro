@@ -1,153 +1,54 @@
 ---
+
 /**
- * Hero - Landing page hero section with flexible background options
+ * Hero - Travel booking search hero section
  *
  * @description
- * A full-width hero section designed for landing pages. Includes a main headline,
- * supporting subtitle text, and up to two call-to-action buttons. Supports multiple
- * background types: solid color, gradient, image, or video.
- *
- * @example Default (solid background)
- * ```astro
- * <Hero
- *   title="Ship faster. Scale effortlessly."
- *   subtitle="The modern deployment platform for teams."
- *   primaryCTA={{ label: "Get Started", href: "/signup" }}
- * />
- * ```
- *
- * @example With gradient background
- * ```astro
- * <Hero
- *   title="Ship faster"
- *   subtitle="The modern platform for teams."
- *   primaryCTA={{ label: "Get Started", href: "/signup" }}
- *   backgroundType="gradient"
- *   gradient="from-primary/20 via-background to-background"
- * />
- * ```
- *
- * @example With image background
- * ```astro
- * <Hero
- *   title="Ship faster"
- *   subtitle="The modern platform for teams."
- *   primaryCTA={{ label: "Get Started", href: "/signup" }}
- *   backgroundType="image"
- *   backgroundImage="/images/hero-bg.jpg"
- *   overlay={true}
- *   overlayOpacity={60}
- * />
- * ```
- *
- * @example With video background
- * ```astro
- * <Hero
- *   title="Ship faster"
- *   subtitle="The modern platform for teams."
- *   primaryCTA={{ label: "Get Started", href: "/signup" }}
- *   backgroundType="video"
- *   backgroundVideo="/videos/hero-bg.mp4"
- *   backgroundVideoPoster="/images/hero-poster.jpg"
- *   overlay={true}
- * />
- * ```
+ * Search bar unified style.
  */
 
 interface Props {
-  /** Main headline text displayed prominently */
-  title: string;
-  /** Supporting text that appears below the headline */
-  subtitle: string;
-  /** Primary call-to-action button with label and link */
-  primaryCTA: { label: string; href: string };
-  /** Optional secondary call-to-action button */
-  secondaryCTA?: { label: string; href: string };
   /** Background type */
   backgroundType?: 'solid' | 'gradient' | 'image' | 'video';
-  /** Solid background style (when backgroundType is 'solid') */
-  background?: 'default' | 'muted' | 'accent';
-  /** Gradient classes (when backgroundType is 'gradient') */
+  /** Gradient classes */
   gradient?: string;
-  /** Background image URL (when backgroundType is 'image') */
+  /** Background image URL */
   backgroundImage?: string;
-  /** Background video URL (when backgroundType is 'video') */
+  /** Background video URL */
   backgroundVideo?: string;
-  /** Video poster image for loading state */
-  backgroundVideoPoster?: string;
   /** Show dark overlay on image/video backgrounds */
   overlay?: boolean;
-  /** Overlay opacity percentage (0-100) */
+  /** Overlay opacity percentage */
   overlayOpacity?: number;
-  /** Text color scheme for image/video backgrounds */
-  textColor?: 'auto' | 'light' | 'dark';
-  /** Minimum height for the hero section */
-  minHeight?: 'default' | 'screen' | 'large';
-  /** Content alignment */
-  align?: 'center' | 'left';
+  /** Destinations from backend for select dropdown */
+  destinations?: Array<{
+    id: number;
+    titulo: string;
+    descripcion: string;
+    precio: number;
+    imagen_url: string;
+    disponible: boolean;
+  }>;
 }
 
 const {
-  title,
-  subtitle,
-  primaryCTA,
-  secondaryCTA,
-  backgroundType = 'solid',
-  background = 'default',
-  gradient = 'from-primary/10 via-background to-background',
+  backgroundType = 'gradient',
+  gradient = 'from-primary via-primary-dark to-primary-darker',
   backgroundImage,
   backgroundVideo,
-  backgroundVideoPoster,
   overlay = false,
-  overlayOpacity = 50,
-  textColor = 'auto',
-  minHeight = 'default',
-  align = 'center',
+  overlayOpacity = 40,
+  destinations = []
 } = Astro.props;
 
-// Solid background classes
-const solidBgClass = {
-  default: 'bg-background',
-  muted: 'bg-surface',
-  accent: 'bg-primary/5',
-}[background];
 
-// Determine if we need light text (for dark backgrounds)
-const needsLightText =
-  textColor === 'light' ||
-  (textColor === 'auto' && (backgroundType === 'image' || backgroundType === 'video') && overlay);
-
-// Text color classes
-const textClasses = needsLightText
-  ? {
-      heading: 'text-white',
-      body: 'text-white/80',
-      button: 'border-white/30 text-white hover:bg-white/10',
-    }
-  : {
-      heading: 'text-text',
-      body: 'text-text-muted',
-      button: 'border-border text-text hover:bg-surface',
-    };
-
-// Min height classes
-const minHeightClass = {
-  default: 'py-section',
-  large: 'py-24 md:py-32',
-  screen: 'min-h-[80vh] flex items-center',
-}[minHeight];
-
-// Alignment classes
-const alignClass = align === 'left' ? 'text-left' : 'text-center mx-auto';
-const buttonAlignClass = align === 'left' ? 'justify-start' : 'justify-center';
 ---
 
 <section
   class:list={[
-    'relative overflow-hidden',
-    minHeightClass,
-    backgroundType === 'solid' && solidBgClass,
+    'relative overflow-hidden py-20 md:py-32',
     backgroundType === 'gradient' && `bg-linear-to-br ${gradient}`,
+    backgroundType === 'image' && 'relative',
   ]}
 >
   {/* Image Background */}
@@ -155,6 +56,7 @@ const buttonAlignClass = align === 'left' ? 'justify-start' : 'justify-center';
     backgroundType === 'image' && backgroundImage && (
       <div class="absolute inset-0 z-0">
         <img src={backgroundImage} alt="" class="w-full h-full object-cover" loading="eager" />
+        {overlay && <div class="absolute inset-0 bg-black" style={`opacity: ${overlayOpacity / 100}`} />}
       </div>
     )
   }
@@ -163,67 +65,537 @@ const buttonAlignClass = align === 'left' ? 'justify-start' : 'justify-center';
   {
     backgroundType === 'video' && backgroundVideo && (
       <div class="absolute inset-0 z-0">
-        <video
-          autoplay
-          muted
-          loop
+        <video 
+          autoplay 
+          muted 
+          loop 
           playsinline
-          poster={backgroundVideoPoster}
           class="w-full h-full object-cover"
         >
           <source src={backgroundVideo} type="video/mp4" />
         </video>
+        {overlay && <div class="absolute inset-0 bg-black" style={`opacity: ${overlayOpacity / 100}`} />}
       </div>
-    )
-  }
-
-  {/* Overlay */}
-  {
-    overlay && (backgroundType === 'image' || backgroundType === 'video') && (
-      <div class="absolute inset-0 z-1 bg-black" style={`opacity: ${overlayOpacity / 100}`} />
     )
   }
 
   {/* Content */}
-  <div
-    class:list={[
-      'relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8',
-      minHeight === 'screen' && 'w-full',
-    ]}
-  >
-    <div class:list={['max-w-3xl', alignClass]}>
-      <h1
-        class:list={[
-          'text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-tight',
-          textClasses.heading,
-        ]}
-      >
-        {title}
-      </h1>
-      <p class:list={['mt-6 text-lg sm:text-xl leading-relaxed', textClasses.body]}>
-        {subtitle}
-      </p>
-      <div class:list={['mt-10 flex flex-col sm:flex-row items-center gap-4', buttonAlignClass]}>
-        <a
-          href={primaryCTA.href}
-          class="inline-flex items-center justify-center px-6 py-3 rounded-md bg-primary text-white font-medium hover:bg-primary-dark transition-colors w-full sm:w-auto"
-        >
-          {primaryCTA.label}
-        </a>
-        {
-          secondaryCTA && (
-            <a
-              href={secondaryCTA.href}
-              class:list={[
-                'inline-flex items-center justify-center px-6 py-3 rounded-md border font-medium transition-colors w-full sm:w-auto',
-                textClasses.button,
-              ]}
+  <div class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+      
+    {/* Unified Search Bar Container */}
+    <div class="bg-white dark:bg-surface rounded-3xl md:rounded-full shadow-2xl p-2 md:p-3">
+      <form class="flex flex-col md:flex-row md:items-center divide-y md:divide-y-0 md:divide-x divide-gray-200 dark:divide-gray-700">
+        
+        {/* Destination Field */}
+        <div class="relative flex-1 px-4 py-2 md:py-0 group cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-2xl md:rounded-l-full transition-colors">
+          <label for="destination" class="block text-xs font-bold text-gray-700 uppercase tracking-wider ml-1">
+            Destino
+          </label>
+          <div class="flex items-center">
+            <svg class="w-5 h-5 text-gray-700 mr-2 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+            <select
+              id="destination"
+              class="w-full bg-transparent border-none p-0 text-gray-700 focus:ring-0 text-base md:text-lg truncate appearance-none cursor-pointer"
             >
-              {secondaryCTA.label}
-            </a>
-          )
-        }
+              <option value="" disabled selected>¿A dónde vas?</option>
+              {destinations.map((destino) => (
+                <option value={destino.titulo} class="text-gray-700">
+                  {destino.titulo}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Dates Field */}
+        <div class="relative flex-1 px-4 py-2 md:py-0 group cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+          <label for="dates" class="block text-xs font-bold text-gray-700 uppercase tracking-wider ml-1">
+            Fechas
+          </label>
+          <div class="flex items-center">
+            <svg class="w-5 h-5 text-gray-700 mr-2 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            <input
+              id="dates"
+              type="text"
+              placeholder="Agregar fechas"
+              class="w-full bg-transparent border-none p-0 text-gray-700 placeholder-gray-700  focus:ring-0 text-base md:text-lg truncate"
+            />
+          </div>
+        </div>
+
+        {/* Guests Field */}
+        <div class="relative flex-1 px-4 py-2 md:py-0 group cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+          <label for="guests" class="block text-xs font-bold text-gray-700 uppercase tracking-wider ml-1">
+            Huéspedes
+          </label>
+          <div class="flex items-center">
+            <svg class="w-5 h-5 text-gray-700 mr-2 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+            </svg>
+            <select id="guests" class="w-full bg-transparent border-none p-0 text-gray-700  focus:ring-0 text-base md:text-lg cursor-pointer appearance-none">
+              <option>2 Huéspedes</option>
+              <option>1 Huésped</option>
+              <option>3 Huéspedes</option>
+              <option>4+ Huéspedes</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Search Button (Integrated) */}
+        <div class="p-2">
+          <button
+            type="submit"
+            class="w-full md:w-auto h-12 md:h-14 px-8 bg-primary hover:bg-primary-dark text-white font-bold rounded-2xl md:rounded-full transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+          >
+            <span>Comenzar</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+            </svg>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    {/* Optional: Simple text below */}
+    <div class="mt-8 text-center">
+      <p class="text-black dark:text-white text-sm">Busca en cientos de sitios de viajes a la vez.</p>
+    </div>
+  </div>
+
+  {/* Registration Modal */}
+  <div id="registration-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="registration-modal-title" role="dialog" aria-modal="true">
+    <!-- Backdrop Blur -->
+    <div class="fixed inset-0 bg-gray-900/30 backdrop-blur-sm transition-opacity opacity-0" id="registration-backdrop"></div>
+
+    <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+      <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+        
+        <!-- Modal Panel -->
+        <div class="relative transform overflow-hidden rounded-2xl bg-surface text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" id="registration-panel">
+          
+          <!-- Botón cerrar (X) -->
+          <button type="button" onclick="closeRegistrationModal()" class="absolute right-4 top-4 text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-300 focus:outline-none">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
+          <div class="px-6 py-6 lg:px-8">
+            <div class="mb-6">
+              <h3 class="text-2xl font-semibold leading-6 text-text" id="registration-modal-title">Crea tu cuenta</h3>
+              <p class="mt-2 text-sm text-gray-500 dark:text-gray-300">
+                Regístrate para ver ofertas personalizadas y gestionar tus viajes.
+                <span id="registration-search-details" class="font-bold text-gray-800 dark:text-gray-200"></span>
+              </p>
+            </div>
+
+            <form id="registration-form" class="space-y-4">
+              <!-- Hidden search data -->
+              <input type="hidden" name="destination" id="registration-destination" />
+              <input type="hidden" name="dates" id="registration-dates" />
+              <input type="hidden" name="guests" id="registration-guests" />
+
+              <!-- Full name field -->
+              <div>
+                <label for="reg-fullName" class="block text-sm font-medium text-text mb-2">Nombre completo</label>
+                <input
+                  type="text"
+                  id="reg-fullName"
+                  name="fullName"
+                  required
+                  minlength="2"
+                  autocomplete="name"
+                  class="w-full px-4 py-3 rounded-md border border-border bg-background text-text placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+                  placeholder="Juan Pérez"
+                />
+                <p class="mt-1 text-sm text-red-500 hidden" data-error="fullName"></p>
+              </div>
+
+              <!-- Email field -->
+              <div>
+                <label for="reg-email" class="block text-sm font-medium text-text mb-2">Correo electrónico</label>
+                <input
+                  type="email"
+                  id="reg-email"
+                  name="email"
+                  required
+                  autocomplete="email"
+                  class="w-full px-4 py-3 rounded-md border border-border bg-background text-text placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+                  placeholder="tu@ejemplo.com"
+                />
+                <p class="mt-1 text-sm text-red-500 hidden" data-error="email"></p>
+              </div>
+
+              <!-- WhatsApp field -->
+              <div>
+                <label for="reg-whatsapp" class="block text-sm font-medium text-text mb-2">WhatsApp</label>
+                <input
+                  type="tel"
+                  id="reg-whatsapp"
+                  name="whatsapp"
+                  required
+                  class="w-full px-4 py-3 rounded-md border border-border bg-background text-text placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+                  placeholder="+52 123 456 7890"
+                />
+                <p class="mt-1 text-sm text-red-500 hidden" data-error="whatsapp"></p>
+              </div>
+
+              <!-- Password field -->
+              <div>
+                <label for="reg-password" class="block text-sm font-medium text-text mb-2">Contraseña</label>
+                <input
+                  type="password"
+                  id="reg-password"
+                  name="password"
+                  required
+                  minlength="8"
+                  autocomplete="new-password"
+                  class="w-full px-4 py-3 rounded-md border border-border bg-background text-text placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+                  placeholder="••••••••"
+                />
+                <p class="mt-1 text-sm text-text-muted">Debe tener al menos 8 caracteres</p>
+                <p class="mt-1 text-sm text-red-500 hidden" data-error="password"></p>
+              </div>
+
+              <!-- Terms agreement checkbox -->
+              <div>
+                <div class="flex items-start">
+                  <input
+                    type="checkbox"
+                    id="reg-agreeTerms"
+                    name="agreeTerms"
+                    required
+                    class="h-4 w-4 mt-0.5 rounded border-border text-primary focus:ring-primary focus:ring-offset-background"
+                  />
+                  <label for="reg-agreeTerms" class="ml-2 text-sm text-text-muted">
+                    Acepto los{' '}
+                    <a href="/terms" class="text-primary hover:text-primary-dark transition-colors underline">
+                      Términos de Servicio
+                    </a>{' '}
+                    y la{' '}
+                    <a href="/privacy" class="text-primary hover:text-primary-dark transition-colors underline">
+                      Política de Privacidad
+                    </a>
+                  </label>
+                </div>
+                <p class="mt-1 text-sm text-red-500 hidden" data-error="agreeTerms"></p>
+              </div>
+
+              <!-- Form status messages -->
+              <div id="registration-form-status" class="hidden">
+                <div
+                  id="registration-form-success"
+                  class="hidden p-4 rounded-md bg-green-100 dark:bg-green-950 border border-green-300 dark:border-green-800"
+                >
+                  <p class="text-green-900 dark:text-green-100 font-medium">¡Cuenta creada exitosamente!</p>
+                  <p class="text-green-800 dark:text-green-300 text-sm mt-1">Redirigiendo al dashboard...</p>
+                </div>
+                <div
+                  id="registration-form-error"
+                  class="hidden p-4 rounded-md bg-red-100 dark:bg-red-950 border border-red-300 dark:border-red-800"
+                >
+                  <p class="text-red-900 dark:text-red-100 font-medium">Registro fallido</p>
+                  <p class="text-red-800 dark:text-red-300 text-sm mt-1">
+                    Verifica tu información e intenta de nuevo.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Submit button -->
+              <div class="mt-6 flex flex-col gap-3">
+                <button type="submit" id="registration-submit-btn" class="flex w-full justify-center rounded-lg bg-primary px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-primary-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                  <span id="registration-button-text">Crear cuenta y ver ofertas</span>
+                  <span id="registration-button-loading" class="hidden">
+                    <svg class="animate-spin inline-block w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Creando cuenta...
+                  </span>
+                </button>
+                <div id="registration-form-feedback" class="text-center text-sm hidden"></div>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
+
+<script>
+  // Hero Search Functionality
+  const heroForm = document.querySelector('form');
+  const datesInput = document.getElementById('dates');
+  const guestsInput = document.getElementById('guests');
+  const registrationModal = document.getElementById('registration-modal');
+  const registrationForm = document.getElementById('registration-form');
+
+  // Handle Hero Search
+  heroForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    // Get search data
+    const destinationSelect = document.getElementById('destination') as HTMLSelectElement;
+    const searchData = {
+      destination: destinationSelect?.value || '',
+      dates: datesInput?.value || '',
+      guests: guestsInput?.value || '2 Huéspedes'
+    };
+
+    // Check if user has valid session
+    const sessionToken = document.cookie.match(/session_token=([^;]+)/)?.[1];
+    
+    if (sessionToken) {
+      // User has valid session, redirect to dashboard with search data
+      localStorage.setItem('pending_search', JSON.stringify(searchData));
+      window.location.href = '/dashboard';
+    } else {
+      // User not logged in, show registration modal
+      showRegistrationModal(searchData);
+    }
+  });
+
+  function showRegistrationModal(searchData) {
+    // Pre-fill hidden fields with search data
+    document.getElementById('registration-destination').value = searchData.destination;
+    document.getElementById('registration-dates').value = searchData.dates;
+    document.getElementById('registration-guests').value = searchData.guests;
+    
+    // Update search details in modal
+    const searchDetails = document.getElementById('registration-search-details');
+    if (searchDetails) {
+      let detailsText = '';
+      if (searchData.destination) {
+        detailsText = `Buscando viajes a "${searchData.destination}"`;
+        if (searchData.dates) detailsText += ` para ${searchData.dates}`;
+        if (searchData.guests) detailsText += ` (${searchData.guests})`;
+      } else {
+        detailsText = 'Explora nuestros destinos disponibles';
+      }
+      searchDetails.textContent = detailsText;
+    }
+    
+    // Show modal with animations
+    registrationModal.classList.remove('hidden');
+    setTimeout(() => {
+      document.getElementById('registration-backdrop').classList.remove('opacity-0');
+      document.getElementById('registration-panel').classList.remove('opacity-0', 'translate-y-4', 'sm:translate-y-0', 'sm:scale-95');
+      document.getElementById('registration-panel').classList.add('opacity-100', 'translate-y-0', 'sm:scale-100');
+    }, 10);
+  }
+
+  function closeRegistrationModal() {
+    // Animate modal close
+    document.getElementById('registration-backdrop').classList.add('opacity-0');
+    document.getElementById('registration-panel').classList.remove('opacity-100', 'translate-y-0', 'sm:scale-100');
+    document.getElementById('registration-panel').classList.add('opacity-0', 'translate-y-4', 'sm:translate-y-0', 'sm:scale-95');
+
+    setTimeout(() => {
+      registrationModal.classList.add('hidden');
+    }, 300);
+  }
+
+  // Validation rules
+  const validationRules = {
+    fullName: (value) => {
+      if (!value.trim()) return 'El nombre completo es requerido';
+      if (value.trim().length < 2) return 'El nombre debe tener al menos 2 caracteres';
+      return null;
+    },
+    email: (value) => {
+      if (!value.trim()) return 'El correo electrónico es requerido';
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(value)) return 'Por favor ingresa un correo electrónico válido';
+      return null;
+    },
+    whatsapp: (value) => {
+      if (!value.trim()) return 'El número de WhatsApp es requerido';
+      if (!value.includes('+')) return 'Incluye el código de país (ej: +52)';
+      return null;
+    },
+    password: (value) => {
+      if (!value) return 'La contraseña es requerida';
+      if (value.length < 8) return 'La contraseña debe tener al menos 8 caracteres';
+      return null;
+    },
+  };
+
+  // Show/hide error message
+  function showError(fieldName, message) {
+    const errorEl = document.querySelector(`#registration-form [data-error="${fieldName}"]`);
+    const inputEl = document.getElementById(`reg-${fieldName}`);
+
+    if (errorEl) {
+      if (message) {
+        errorEl.textContent = message;
+        errorEl.classList.remove('hidden');
+        if (inputEl) {
+          inputEl.classList.add('border-red-500');
+          inputEl.classList.remove('border-border');
+        }
+      } else {
+        errorEl.classList.add('hidden');
+        if (inputEl) {
+          inputEl.classList.remove('border-red-500');
+          inputEl.classList.add('border-border');
+        }
+      }
+    }
+  }
+
+  // Validate single field
+  function validateField(fieldName) {
+    const input = document.getElementById(`reg-${fieldName}`);
+    if (!input || !validationRules[fieldName]) return true;
+
+    const error = validationRules[fieldName](input.value);
+    showError(fieldName, error);
+    return !error;
+  }
+
+  // Checkbox validation
+  function validateCheckbox() {
+    const checkbox = document.getElementById('reg-agreeTerms');
+    if (!checkbox.checked) {
+      showError('agreeTerms', 'Debes aceptar los Términos de Servicio y Política de Privacidad');
+      return false;
+    }
+    showError('agreeTerms', null);
+    return true;
+  }
+
+  // Validate all fields
+  function validateForm() {
+    let isValid = true;
+    for (const fieldName of Object.keys(validationRules)) {
+      if (!validateField(fieldName)) {
+        isValid = false;
+      }
+    }
+    if (!validateCheckbox()) {
+      isValid = false;
+    }
+    return isValid;
+  }
+
+  // Real-time validation
+  for (const fieldName of Object.keys(validationRules)) {
+    const input = document.getElementById(`reg-${fieldName}`);
+    if (input) {
+      input.addEventListener('blur', () => validateField(fieldName));
+      input.addEventListener('input', () => {
+        const errorEl = document.querySelector(`#registration-form [data-error="${fieldName}"]`);
+        if (errorEl && !errorEl.classList.contains('hidden')) {
+          validateField(fieldName);
+        }
+      });
+    }
+  }
+
+  // Checkbox validation
+  document.getElementById('reg-agreeTerms')?.addEventListener('change', validateCheckbox);
+
+  // Handle Registration Form Submission
+  registrationForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    // Validate form
+    if (!validateForm()) {
+      return;
+    }
+
+    // Show loading state
+    const submitBtn = document.getElementById('registration-submit-btn');
+    const buttonText = document.getElementById('registration-button-text');
+    const buttonLoading = document.getElementById('registration-button-loading');
+    const formStatus = document.getElementById('registration-form-status');
+    const formSuccess = document.getElementById('registration-form-success');
+    const formError = document.getElementById('registration-form-error');
+
+    // Hide previous status messages
+    formStatus?.classList.add('hidden');
+    formSuccess?.classList.add('hidden');
+    formError?.classList.add('hidden');
+
+    // Show loading
+    submitBtn.disabled = true;
+    buttonText?.classList.add('hidden');
+    buttonLoading?.classList.remove('hidden');
+
+    const formData = new FormData(registrationForm);
+    
+    try {
+      // Create user session
+      const userData = {
+        fullName: formData.get('fullName'),
+        email: formData.get('email'),
+        whatsapp: formData.get('whatsapp'),
+        password: formData.get('password'), // In production, this should be hashed
+        destination: formData.get('destination'),
+        dates: formData.get('dates'),
+        guests: formData.get('guests')
+      };
+
+      // Register user in backend
+      const registerResponse = await fetch('http://localhost:8000/auth/register/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData)
+      });
+
+      if (!registerResponse.ok) {
+        const error = await registerResponse.json();
+        throw new Error(error.message || 'Registration failed');
+      }
+
+      const { token, user } = await registerResponse.json();
+      
+      // Set session token cookie
+      document.cookie = `session_token=${token}; path=/; max-age=${7 * 24 * 60 * 60}; secure; samesite=strict`;
+      
+      // Save pending search data
+      localStorage.setItem('pending_search', JSON.stringify({
+        destination: userData.destination,
+        dates: userData.dates,
+        guests: userData.guests
+      }));
+
+      // Show success message
+      formStatus?.classList.remove('hidden');
+      formSuccess?.classList.remove('hidden');
+      
+      // Redirect to dashboard after showing success
+      setTimeout(() => {
+        window.location.href = '/dashboard';
+      }, 2000);
+      
+    } catch (error) {
+      console.error('Registration error:', error);
+      // Show error message
+      formStatus?.classList.remove('hidden');
+      formError?.classList.remove('hidden');
+    } finally {
+      // Reset button state
+      submitBtn.disabled = false;
+      buttonText?.classList.remove('hidden');
+      buttonLoading?.classList.add('hidden');
+    }
+  });
+
+  // Date picker functionality
+  datesInput?.addEventListener('click', function() {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    const dates = `${today.toLocaleDateString('es-MX')} - ${tomorrow.toLocaleDateString('es-MX')}`;
+    this.value = dates;
+  });
+</script>

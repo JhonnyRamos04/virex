@@ -1,5 +1,5 @@
 ---
-quote: "We replaced three internal tools with Virex and cut our infrastructure bill by 40%. The built-in analytics alone paid for the migration in the first month."
+quote: "Me encanta reservar en GoFlowTrips, la experiencia fue increíble"
 author: "Liam Patel"
 role: "Head of Platform Engineering"
 company: "SkyForge"

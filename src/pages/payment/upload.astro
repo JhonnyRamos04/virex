@@ -1,0 +1,116 @@
+---
+import MarketingLayout from '@/layouts/MarketingLayout.astro';
+import { Icon } from 'astro-icon/components';
+import { siteConfig } from '@/config';
+
+const { searchParams } = Astro.url;
+const method = searchParams.get('method') || 'transfer';
+const plan = searchParams.get('plan') || 'plan';
+
+const methodNames: Record<string, string> = {
+  zelle: 'Zelle',
+  'pago-movil': 'Pago Móvil',
+  transfer: 'Transferencia Bancaria',
+  paypal: 'PayPal',
+};
+
+const methodName = methodNames[method] || method;
+---
+
+<MarketingLayout
+  title={`Subir Comprobante - ${siteConfig.name}`}
+  description="Sube tu comprobante de pago para procesar la reserva."
+>
+  <div class="bg-surface relative overflow-hidden">
+    <div class="max-w-lg mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-text mb-4">Confirmar Pago</h1>
+            <p class="text-text-muted">
+                Has seleccionado pagar vía <span class="font-bold text-primary">{methodName}</span>
+                para el plan <span class="capitalize font-bold">{plan}</span>.
+            </p>
+        </div>
+
+        <div class="bg-background border border-border rounded-xl p-6 sm:p-8 shadow-sm">
+            <form id="payment-form" class="space-y-6">
+                <div>
+                    <label for="reference" class="block text-sm font-medium text-text mb-2">
+                        Número de Referencia
+                    </label>
+                    <input 
+                        type="text" 
+                        id="reference" 
+                        name="reference" 
+                        required 
+                        placeholder="Ej: 12345678"
+                        class="w-full px-4 py-3 rounded-md border border-border bg-surface text-text focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+                    />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-text mb-2">
+                        Comprobante de Pago (Captura o PDF)
+                    </label>
+                    <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-border border-dashed rounded-md hover:border-primary transition-colors cursor-pointer bg-surface" id="dropzone">
+                        <div class="space-y-1 text-center">
+                            <Icon name="lucide:upload-cloud" class="mx-auto h-12 w-12 text-text-muted" />
+                            <div class="flex text-sm text-text-muted">
+                                <label for="file-upload" class="relative cursor-pointer rounded-md font-medium text-primary hover:text-primary-dark focus-within:outline-none">
+                                    <span>Sube un archivo</span>
+                                    <input id="file-upload" name="file-upload" type="file" class="sr-only" required accept="image/*,.pdf" />
+                                </label>
+                                <p class="pl-1">o arrástralo aquí</p>
+                            </div>
+                            <p class="text-xs text-text-muted">PNG, JPG, PDF hasta 5MB</p>
+                            <p id="filename" class="text-sm font-medium text-text mt-2 hidden"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-4">
+                    <button 
+                        type="submit"
+                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors"
+                    >
+                        Confirmar Pago
+                    </button>
+                    <a href="/payment" class="block text-center mt-4 text-sm text-text-muted hover:text-text">
+                        Cambiar método de pago
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('payment-form');
+    const fileInput = document.getElementById('file-upload') as HTMLInputElement;
+    const filenameDisplay = document.getElementById('filename');
+
+    fileInput?.addEventListener('change', (e) => {
+        if (fileInput.files && fileInput.files[0] && filenameDisplay) {
+            filenameDisplay.textContent = fileInput.files[0].name;
+            filenameDisplay.classList.remove('hidden');
+        }
+    });
+
+    form?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        // Here we would handle the actual upload logic
+        // For verify purpose, we'll confirm and redirect to dashboard
+        
+        const btn = form.querySelector('button[type="submit"]');
+        if (btn) {
+            const originalText = btn.textContent;
+            btn.textContent = 'Procesando...';
+            btn.setAttribute('disabled', 'true');
+            
+            setTimeout(() => {
+                alert('¡Pago registrado con éxito! Tu reserva está en proceso de verificación.');
+                window.location.href = '/dashboard';
+            }, 1500);
+        }
+    });
+  </script>
+</MarketingLayout>

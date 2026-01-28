@@ -1,17 +1,19 @@
 @import 'tailwindcss';
 @plugin "@tailwindcss/typography";
 
+@variant dark (&:where(.dark, .dark *));
+
 @theme {
   /* Brand Colors */
-  --color-primary: oklch(0.55 0.2 265);
-  --color-primary-dark: oklch(0.45 0.2 265);
+  --color-primary: #985223;
+  --color-primary-dark: #7a411c;
   --color-secondary: oklch(0.65 0.25 350);
 
   /* Semantic Colors */
   --color-background: oklch(1 0 0);
   --color-surface: oklch(0.98 0 0);
-  --color-text: oklch(0.15 0 0);
-  --color-text-muted: oklch(0.45 0 0);
+  --color-text: oklch(0 0 0);
+  --color-text-muted: oklch(0.3 0 0);
   --color-border: oklch(0.9 0 0);
 
   /* Dashboard Status Colors - Light Mode */

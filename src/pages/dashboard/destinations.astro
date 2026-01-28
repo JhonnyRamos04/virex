@@ -1,0 +1,692 @@
+---
+/**
+ * Destinations Page - Browse popular destinations
+ *
+ * @description
+ * Shows a catalog of popular travel destinations with pricing,
+ * ratings, and availability information fetched from backend.
+ */
+import DashboardLayout from '@/layouts/DashboardLayout.astro';
+import Card from '@dashboard-ui/Card.astro';
+import { getPopularDestinations } from '@/lib/travel-data';
+import { Icon } from 'astro-icon/components';
+
+// Fetch destinations from backend
+const popularDestinations = await getPopularDestinations();
+
+// Separate available and unavailable destinations
+const availableDestinations = popularDestinations.filter(d => d.available);
+const unavailableDestinations = popularDestinations.filter(d => !d.available);
+---
+
+<DashboardLayout
+  title="Destinos"
+  description="Explora lugares populares"
+  breadcrumbs={[
+    { label: 'Panel', href: '/dashboard' },
+    { label: 'Destinos' }
+  ]}
+>
+  <div class="destinations-page">
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1 class="page-title">Destinos Populares</h1>
+      <p class="page-description">
+        Descubre los lugares más visitados y planifica tu próxima aventura.
+      </p>
+    </div>
+
+    <!-- Available Destinations -->
+    {availableDestinations.length > 0 && (
+      <Card title="Destinos Disponibles" description={`${availableDestinations.length} destinos para elegir`}>
+        <div class="destinations-grid">
+          {availableDestinations.map((destination) => (
+            <div class="destination-card">
+              <div class="destination-image">
+                <img 
+                  src={destination.image} 
+                  alt={destination.name}
+                  loading="lazy"
+                />
+              </div>
+              <div class="destination-info">
+                <h3 class="destination-name">{destination.name}</h3>
+                <div class="destination-meta">
+                  <div class="destination-price">
+                    <span class="price-label">Desde</span>
+                    <span class="price-value">${destination.price}</span>
+                  </div>
+                  <button 
+                    onclick={`window.openBookingForm(${destination.id}, '${destination.name}', ${destination.price})`}
+                    class="btn-book cursor-pointer border-none"
+                  >
+                    Reservar
+                    <Icon name="lucide:arrow-right" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Card>
+    )}
+
+    <!-- Unavailable Destinations -->
+    {unavailableDestinations.length > 0 && (
+      <Card title="Próximamente" description="Destinos que estarán disponibles pronto">
+        <div class="destinations-grid">
+          {unavailableDestinations.map((destination) => (
+            <div class="destination-card destination-card-unavailable">
+              <div class="destination-image">
+                <img 
+                  src={destination.image} 
+                  alt={destination.name}
+                  loading="lazy"
+                />
+                <div class="destination-overlay">
+                  <span class="unavailable-text">Próximamente</span>
+                </div>
+              </div>
+              <div class="destination-info">
+                <h3 class="destination-name">{destination.name}</h3>
+                <p class="destination-country">
+                  <Icon name="lucide:map-pin" />
+                  {destination.country}
+                </p>
+                <div class="destination-meta">
+                  <div class="destination-price">
+                    <span class="price-value">${destination.price}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Card>
+    )}
+
+    
+  </div>
+
+  <!-- MODAL DE RESERVA (2 PASOS) -->
+  <div id="booking-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="fixed inset-0 bg-gray-900/30 backdrop-blur-sm transition-opacity opacity-0" id="modal-backdrop"></div>
+    <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+      <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+        <div class="relative transform overflow-hidden rounded-2xl bg-surface text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" id="modal-panel">
+          <button type="button" onclick="window.closeBookingModal()" class="absolute right-4 top-4 text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-300 focus:outline-none">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+          
+          <div class="px-6 py-6 lg:px-8">
+            <!-- Header -->
+            <div class="mb-6">
+              <h3 class="text-2xl font-semibold leading-6 text-text" id="modal-title">Confirmar Reserva</h3>
+              <p class="mt-2 text-sm text-gray-500 dark:text-gray-300">
+                <span id="step-indicator">Paso 1 de 2: Datos de la Reserva</span>
+              </p>
+            </div>
+
+            <!-- STEP 1: RESERVATION FORM -->
+            <form id="reservation-form" class="space-y-4">
+              <input type="hidden" name="destino" id="input-destino-id" />
+              <input type="hidden" id="input-destino-price" /> <!-- To store price for payment step -->
+
+              <div>
+                <label for="nombre_cliente" class="block text-sm font-medium leading-6 text-text">Nombre Completo</label>
+                <div class="mt-1">
+                  <input type="text" name="nombre_cliente" id="nombre_cliente" required class="block w-full rounded-lg border-0 py-2.5 px-3 text-text shadow-sm ring-1 ring-inset ring-border placeholder:text-text-muted focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6">
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                   <label for="email_cliente" class="block text-sm font-medium leading-6 text-text">Email</label>
+                   <div class="mt-1">
+                     <input type="email" name="email_cliente" id="email_cliente" required class="block w-full rounded-lg border-0 py-2.5 px-3 text-text shadow-sm ring-1 ring-inset ring-border placeholder:text-text-muted focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6">
+                   </div>
+                </div>
+                <div>
+                   <label for="whatsapp" class="block text-sm font-medium leading-6 text-text">WhatsApp</label>
+                   <div class="mt-1">
+                     <input type="text" name="whatsapp" id="whatsapp" required class="block w-full rounded-lg border-0 py-2.5 px-3 text-text shadow-sm ring-1 ring-inset ring-border placeholder:text-text-muted focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6">
+                   </div>
+                </div>
+              </div>
+              <div>
+                <label for="mensaje_opcional" class="block text-sm font-medium leading-6 text-text">Mensaje (Opcional)</label>
+                <div class="mt-1">
+                  <textarea id="mensaje_opcional" name="mensaje_opcional" rows="2" class="block w-full rounded-lg border-0 py-2.5 px-3 text-text shadow-sm ring-1 ring-inset ring-border placeholder:text-text-muted focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"></textarea>
+                </div>
+              </div>
+              <div class="mt-6">
+                <button type="submit" id="btn-submit-reservation" class="flex w-full justify-center rounded-lg bg-primary px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-primary-dark transition-all disabled:opacity-50">
+                  Continuar al Pago <Icon name="lucide:arrow-right" class="ml-2 w-4 h-4" />
+                </button>
+              </div>
+            </form>
+
+            <!-- STEP 2: PAYMENT FORM (Initially Hidden) -->
+            <form id="payment-form" class="space-y-4 hidden">
+              <input type="hidden" name="reserva" id="input-reserva-id" />
+              
+              <div class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg border border-blue-100 dark:border-blue-800 text-sm text-blue-800 dark:text-blue-200 mb-4">
+                <p>Tu reserva ha sido creada. Por favor, registra tu pago para confirmarla.</p>
+              </div>
+
+              <div>
+                <label for="monto" class="block text-sm font-medium leading-6 text-text">Monto a Pagar ($)</label>
+                <div class="mt-1">
+                  <input type="number" step="0.01" name="monto" id="input-monto" required class="block w-full rounded-lg border-0 py-2.5 px-3 text-text shadow-sm ring-1 ring-inset ring-border placeholder:text-text-muted focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6">
+                </div>
+              </div>
+
+              <div>
+                <label for="metodo_pago" class="block text-sm font-medium leading-6 text-text">Método de Pago</label>
+                <div class="mt-1">
+                  <select name="metodo_pago" id="select-metodo-pago" required class="block w-full rounded-lg border-0 py-2.5 px-3 text-text shadow-sm ring-1 ring-inset ring-border placeholder:text-text-muted focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6">
+                    <option value="">Selecciona un método...</option>
+                    <!-- Populated via JS -->
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label for="referencia" class="block text-sm font-medium leading-6 text-text">Referencia / No. Transacción</label>
+                <div class="mt-1">
+                  <input type="text" name="referencia" id="referencia" required class="block w-full rounded-lg border-0 py-2.5 px-3 text-text shadow-sm ring-1 ring-inset ring-border placeholder:text-text-muted focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6">
+                </div>
+              </div>
+
+              <!-- File Upload for future implementation - currently optional/text for now or generic file input -->
+               <!-- Note: For file upload to work with DRF properly we need 'multipart/form-data' and specific handling. 
+                    For this iteration we will focus on data submission. -->
+
+              <div class="mt-6 flex flex-col gap-3">
+                <button type="submit" id="btn-submit-payment" class="flex w-full justify-center rounded-lg bg-green-600 px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-green-700 transition-all disabled:opacity-50">
+                  <Icon name="lucide:check" class="mr-2 w-4 h-4" /> Registrar Pago
+                </button>
+                <button type="button" onclick="window.skipPayment()" class="text-sm text-text-muted hover:text-text underline cursor-pointer">
+                  Hacer pago después
+                </button>
+              </div>
+            </form>
+
+            <div id="form-feedback" class="text-center text-sm hidden mt-4"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</DashboardLayout>
+
+<script>
+  // Elements
+  const modal = document.getElementById('booking-modal');
+  const modalBackdrop = document.getElementById('modal-backdrop');
+  const modalPanel = document.getElementById('modal-panel');
+  const modalTitle = document.getElementById('modal-title');
+  const stepIndicator = document.getElementById('step-indicator');
+  
+  const reservationForm = document.getElementById('reservation-form');
+  const paymentForm = document.getElementById('payment-form');
+  const feedback = document.getElementById('form-feedback');
+  
+  const submitResBtn = document.getElementById('btn-submit-reservation');
+  const submitPayBtn = document.getElementById('btn-submit-payment');
+  const selectMetodoPago = document.getElementById('select-metodo-pago');
+
+  let currentReservationId = null;
+
+  // --- Initialization ---
+  // Fetch Payment Methods on load
+  async function loadPaymentMethods() {
+      const token = localStorage.getItem('authToken');
+      if (!token) return; 
+
+      try {
+          const res = await fetch('http://localhost:8000/api/metodos-pago/', {
+              headers: { 'Authorization': `Token ${token}` }
+          });
+          if (res.ok) {
+              const methods = await res.json();
+              if (selectMetodoPago) {
+                  selectMetodoPago.innerHTML = '<option value="">Selecciona un método...</option>' + 
+                      methods.map(m => `<option value="${m.id}">${m.nombre}</option>`).join('');
+              }
+          }
+      } catch (e) {
+          console.error("Error loading payment methods", e);
+      }
+  }
+  
+  // Call it immediately
+  loadPaymentMethods();
+
+
+  // --- Logic ---
+
+  window.openBookingForm = (id, title, price) => {
+    // Reset State
+    reservationForm.classList.remove('hidden');
+    paymentForm.classList.add('hidden');
+    reservationForm.reset();
+    paymentForm.reset();
+    feedback.classList.add('hidden');
+    modalTitle.textContent = "Confirmar Reserva";
+    stepIndicator.textContent = `Paso 1 de 2: Datos de la Reserva para ${title}`;
+    currentReservationId = null;
+
+    // Fill IDs and Price
+    const inputDestinoId = document.getElementById('input-destino-id');
+    const inputDestinoPrice = document.getElementById('input-destino-price');
+    const inputMonto = document.getElementById('input-monto');
+
+    if (inputDestinoId) inputDestinoId.value = id;
+    if (inputDestinoPrice) inputDestinoPrice.value = price;
+    if (inputMonto) inputMonto.value = price; // Set default payment amount
+
+    // Pre-fill User Info
+    const storedUser = localStorage.getItem('authUser');
+    if (storedUser) {
+      try {
+        const user = JSON.parse(storedUser);
+        const nameInput = document.getElementById('nombre_cliente');
+        const emailInput = document.getElementById('email_cliente');
+        
+        if (nameInput) nameInput.value = user.nombre || (user.first_name + ' ' + user.last_name).trim() || '';
+        if (emailInput) {
+             emailInput.value = user.email || '';
+             emailInput.readOnly = !!user.email;
+        }
+      } catch (e) { console.error(e); }
+    }
+    
+    // Show Modal Animation
+    modal.classList.remove('hidden');
+    setTimeout(() => {
+        modalBackdrop.classList.remove('opacity-0');
+        modalPanel.classList.remove('opacity-0', 'translate-y-4');
+        modalPanel.classList.add('opacity-100', 'translate-y-0');
+    }, 10);
+  };
+
+  window.closeBookingModal = () => {
+    modalBackdrop.classList.add('opacity-0');
+    modalPanel.classList.add('opacity-0', 'translate-y-4');
+    setTimeout(() => {
+        modal.classList.add('hidden');
+    }, 300);
+  };
+
+  window.skipPayment = () => {
+      window.location.href = '/dashboard/my-destination';
+  };
+
+  // STEP 1: SUBMIT RESERVATION
+  reservationForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    submitResBtn.disabled = true;
+    submitResBtn.innerHTML = 'Procesando...';
+    feedback.classList.add('hidden');
+
+    const formData = new FormData(reservationForm);
+    const payload = Object.fromEntries(formData.entries());
+    const token = localStorage.getItem('authToken');
+
+    try {
+        const response = await fetch('http://localhost:8000/api/reservas/crear/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token ? `Token ${token}` : ''
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            currentReservationId = data.id;
+            
+            // Switch to Step 2
+            reservationForm.classList.add('hidden');
+            paymentForm.classList.remove('hidden');
+            
+            modalTitle.textContent = "Registrar Pago";
+            stepIndicator.textContent = "Paso 2 de 2: Detalles del Pago";
+            
+            // Set reservation ID in payment form
+            const inputReserva = document.getElementById('input-reserva-id');
+            if (inputReserva) inputReserva.value = currentReservationId;
+
+        } else {
+            const error = await response.json();
+            throw new Error(error.detail || "Error al crear reserva");
+        }
+    } catch (err) {
+        feedback.textContent = err.message;
+        feedback.className = "text-center text-sm font-medium text-red-600 mt-4 block";
+        feedback.classList.remove('hidden');
+        submitResBtn.disabled = false;
+        submitResBtn.innerHTML = 'Continuar al Pago';
+    }
+  });
+
+  // STEP 2: SUBMIT PAYMENT
+  paymentForm?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      submitPayBtn.disabled = true;
+      submitPayBtn.innerHTML = 'Registrando...';
+
+      const formData = new FormData(paymentForm);
+      const payload = {
+          reserva: parseInt(formData.get('reserva')),
+          monto: parseFloat(formData.get('monto')),
+          metodo_pago: parseInt(formData.get('metodo_pago')),
+          referencia: formData.get('referencia'),
+          fecha_pago: new Date().toISOString().split('T')[0], // Today
+          estado: 'pendiente'
+      };
+      
+      const token = localStorage.getItem('authToken');
+
+      try {
+          const response = await fetch('http://localhost:8000/api/pagos/', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': token ? `Token ${token}` : ''
+              },
+              body: JSON.stringify(payload)
+          });
+
+          if (response.ok) {
+              feedback.textContent = "¡Pago registrado con éxito!";
+              feedback.className = "text-center text-sm font-medium text-green-600 mt-4 block";
+              feedback.classList.remove('hidden');
+              
+              setTimeout(() => {
+                  window.location.href = '/dashboard/my-destination';
+              }, 1500);
+          } else {
+              const error = await response.json();
+              throw new Error(error.detail || JSON.stringify(error));
+          }
+      } catch (err) {
+          feedback.textContent = "Error en el pago: " + err.message;
+          feedback.className = "text-center text-sm font-medium text-red-600 mt-4 block";
+          feedback.classList.remove('hidden');
+          submitPayBtn.disabled = false;
+          submitPayBtn.innerHTML = 'Registrar Pago';
+      }
+  });
+
+  // Listen for backdrop click
+  modalBackdrop?.addEventListener('click', window.closeBookingModal);
+</script>
+
+<style>
+  .destinations-page {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  /* Page Header */
+  .page-header {
+    margin-bottom: 0.5rem;
+  }
+
+  .page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0 0 0.5rem 0;
+    line-height: 1.2;
+  }
+
+  .page-description {
+    font-size: 1rem;
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+
+  /* Destinations Grid */
+  .destinations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .destination-card {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg, 1rem);
+    overflow: hidden;
+    transition: all 150ms ease;
+    background: var(--color-background);
+  }
+
+  .destination-card:not(.destination-card-unavailable):hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+  }
+
+  .destination-card-unavailable {
+    opacity: 0.7;
+  }
+
+  .destination-image {
+    position: relative;
+    aspect-ratio: 16/10;
+    overflow: hidden;
+  }
+
+  .destination-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 300ms ease;
+  }
+
+  .destination-card:not(.destination-card-unavailable):hover .destination-image img {
+    transform: scale(1.05);
+  }
+
+  .destination-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.375rem 0.75rem;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    color: white;
+    border-radius: var(--radius-full, 9999px);
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .destination-badge :global(svg) {
+    width: 1rem;
+    height: 1rem;
+    color: var(--color-warning);
+  }
+
+  .destination-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .unavailable-text {
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    background: var(--color-warning);
+    border-radius: var(--radius-md, 0.5rem);
+  }
+
+  .destination-info {
+    padding: 1.25rem;
+  }
+
+  .destination-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0 0 0.5rem 0;
+  }
+
+  .destination-country {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    margin: 0 0 1rem 0;
+  }
+
+  .destination-country :global(svg) {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+
+  .destination-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .destination-price {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  .price-label {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+  }
+
+  .price-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-primary);
+  }
+
+  .btn-book {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    background: var(--color-primary);
+    color: white;
+    text-decoration: none;
+    border-radius: var(--radius-md, 0.5rem);
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: all 150ms ease;
+  }
+
+  .btn-book:hover {
+    background: color-mix(in srgb, var(--color-primary) 85%, black);
+    transform: translateX(2px);
+  }
+
+  .btn-book :global(svg) {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  /* Info Banner */
+  .info-banner {
+    display: flex;
+    gap: 1.5rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, var(--color-primary) 0%, color-mix(in srgb, var(--color-primary) 80%, black) 100%);
+    border-radius: var(--radius-lg, 1rem);
+    color: white;
+  }
+
+  .banner-icon {
+    width: 3rem;
+    height: 3rem;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-md, 0.5rem);
+  }
+
+  .banner-icon :global(svg) {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .banner-content {
+    flex: 1;
+  }
+
+  .banner-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .banner-text {
+    font-size: 1rem;
+    margin: 0 0 1rem 0;
+    opacity: 0.9;
+  }
+
+  .banner-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    background: white;
+    color: var(--color-primary);
+    text-decoration: none;
+    border-radius: var(--radius-md, 0.5rem);
+    font-weight: 600;
+    transition: all 150ms ease;
+  }
+
+  .banner-link:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: translateX(2px);
+  }
+
+  .banner-link :global(svg) {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .page-title {
+      font-size: 1.75rem;
+    }
+
+    .destinations-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .info-banner {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .banner-icon {
+      margin: 0 auto;
+    }
+  }
+</style>

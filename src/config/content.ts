@@ -17,13 +17,13 @@ export const announcement: AnnouncementConfig = {
   id: 'launch-2025',
 
   /** Announcement text */
-  text: '🚀 Virex 2.0 is here!',
+  text: '🌍 GoFlowTrips está aquí!',
 
   /** Optional link URL */
-  href: '/changelog',
+  href: '/destinos',
 
   /** Optional link text */
-  linkText: "See what's new",
+  linkText: 'Descubre nuevos destinos',
 
   /** Visual style: 'primary' | 'secondary' | 'gradient' */
   variant: 'primary',
@@ -35,12 +35,12 @@ export const announcement: AnnouncementConfig = {
 /** Configurable content strings for various sections */
 export const content: ContentStrings = {
   newsletter: {
-    title: 'Stay in the loop',
-    description: 'Get the latest updates, tips, and news delivered to your inbox.',
-    placeholder: 'Enter your email',
-    buttonText: 'Subscribe',
-    successMessage: 'Thanks for subscribing! Check your inbox to confirm.',
-    errorMessage: 'Something went wrong. Please try again.',
-    privacyNote: 'We respect your privacy. Unsubscribe at any time.',
+    title: 'Mantente informado',
+    description: 'Recibe las últimas actualizaciones, consejos y noticias de viajes en tu correo.',
+    placeholder: 'Ingresa tu correo electrónico',
+    buttonText: 'Suscribirse',
+    successMessage: '¡Gracias por suscribirte! Revisa tu correo para confirmar.',
+    errorMessage: 'Algo salió mal. Por favor intenta de nuevo.',
+    privacyNote: 'Respetamos tu privacidad. Puedes cancelar la suscripción en cualquier momento.',
   },
 };

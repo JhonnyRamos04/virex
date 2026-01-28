@@ -1,50 +1,109 @@
 ---
 /**
  * Register Page
- *
+ * 
  * @description
- * User registration page with form and social authentication options.
- * Uses demo mode by default - configure action prop on RegisterForm for real backend.
+ * User registration page with authentication via backend API
  */
-import MarketingLayout from '@/layouts/MarketingLayout.astro';
-import RegisterForm from '@forms/RegisterForm.astro';
-import SocialAuthButtons from '@forms/SocialAuthButtons.astro';
-import { siteConfig } from '@/config';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { RegisterView } from '@/components/auth/RegisterView';
 ---
 
-<MarketingLayout
-  title={`Create Account - ${siteConfig.name}`}
-  description="Create your free account and start building with our platform today."
+<BaseLayout
+  title="Crear Cuenta"
+  description="Crea tu cuenta en GoFlowTrips"
 >
-  <section class="py-section">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="max-w-md mx-auto">
-        <!-- Card container -->
-        <div class="bg-surface rounded-lg border border-border p-8 shadow-sm">
-          <!-- Header -->
-          <div class="text-center mb-8">
-            <h1 class="text-2xl font-bold text-text">Create your account</h1>
-            <p class="mt-2 text-text-muted">Start your free trial today</p>
-          </div>
-
-          <!-- Register Form -->
-          <RegisterForm />
-
-          <!-- Social Auth -->
-          <SocialAuthButtons dividerText="Or sign up with" variant="register" />
-
-          <!-- Login link -->
-          <p class="mt-6 text-center text-sm text-text-muted">
-            Already have an account?{' '}
-            <a
-              href="/login"
-              class="font-medium text-primary hover:text-primary-dark transition-colors"
-            >
-              Sign in
-            </a>
-          </p>
+  <div class="auth-page">
+    <div class="auth-container">
+      <div class="auth-card">
+        <div class="auth-header">
+          <a href="/" class="logo-link">
+            <h1 class="logo">GoFlow<span class="logo-accent">Trips</span></h1>
+          </a>
+          <p class="auth-subtitle">Regístrate para empezar a viajar</p>
         </div>
+        <RegisterView client:only="react" />
+        <p class="auth-footer-text">
+          Al registrarte, aceptas nuestros <a href="/terms" class="auth-link">Términos</a> y <a href="/privacy" class="auth-link">Política de Privacidad</a>
+        </p>
       </div>
     </div>
-  </section>
-</MarketingLayout>
+  </div>
+</BaseLayout>
+
+<style>
+  .auth-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    background: linear-gradient(135deg, var(--color-background) 0%, var(--color-surface) 100%);
+  }
+
+  .auth-container {
+    width: 100%;
+    max-width: 28rem;
+  }
+
+  .auth-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl, 1rem);
+    padding: 2.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  }
+
+  .auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .logo-link {
+    text-decoration: none;
+  }
+
+  .logo {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0 0 0.5rem 0;
+  }
+
+  .logo-accent {
+    color: var(--color-primary);
+  }
+
+  .auth-subtitle {
+    font-size: 1rem;
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+
+  .auth-footer-text {
+    text-align: center;
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    margin-top: 1.5rem;
+  }
+
+  .auth-link {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .auth-link:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 640px) {
+    .auth-card {
+      padding: 1.5rem;
+    }
+
+    .logo {
+      font-size: 1.75rem;
+    }
+  }
+</style>

@@ -1,0 +1,123 @@
+---
+/**
+ * Payments Page - Payment history and transactions
+ *
+ * @description
+ * Shows the complete payment history with transaction details,
+ * status, and payment methods.
+ */
+import DashboardLayout from '@/layouts/DashboardLayout.astro';
+import { PaymentHistoryList } from '@/components/dashboard/PaymentHistoryList';
+---
+
+<DashboardLayout
+  title="Pagos"
+  description="Historial de transacciones"
+  breadcrumbs={[
+    { label: 'Panel', href: '/dashboard' },
+    { label: 'Pagos' }
+  ]}
+>
+  <div class="payments-page">
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1 class="page-title">Historial de Pagos</h1>
+      <p class="page-description">
+        Revisa todas tus transacciones y estados de pago.
+      </p>
+    </div>
+
+    <!-- React Component for Payments & Stats -->
+    <PaymentHistoryList client:only="react" />
+
+   
+  </div>
+</DashboardLayout>
+
+<style>
+  .payments-page {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  /* Page Header */
+  .page-header {
+    margin-bottom: 0.5rem;
+  }
+
+  .page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0 0 0.5rem 0;
+    line-height: 1.2;
+  }
+
+  .page-description {
+    font-size: 1rem;
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+
+  /* Payment Methods */
+  .payment-methods {
+    padding: 1.5rem;
+    background: var(--color-surface, #fff);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg, 1rem);
+  }
+
+  .methods-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0 0 1rem 0;
+  }
+
+  .methods-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+  }
+
+  .method-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1.5rem 1rem;
+    background: var(--color-background, #f9fafb);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md, 0.5rem);
+    transition: all 150ms ease;
+  }
+
+  .method-card:hover {
+    background: var(--color-surface, #fff);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+
+  .method-card :global(svg) {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .method-card span {
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .page-title {
+      font-size: 1.75rem;
+    }
+    
+    .methods-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

@@ -4,17 +4,22 @@ import PageHeader from '@sections/content/PageHeader.astro';
 import ContactForm from '@forms/ContactForm.astro';
 import { Icon } from 'astro-icon/components';
 import { siteConfig, contact, contactMethods, contactFAQs } from '@/config';
+import Map from '@/components/Map';
+import { getMapRoutes, getPointsOfInterest } from '@/lib/travel-data';
 
 const office = contact.address;
+
+const routes = getMapRoutes();
+const pointsOfInterest = getPointsOfInterest();
 ---
 
 <MarketingLayout
-  title={`Contact - ${siteConfig.name}`}
-  description="Get in touch with the Virex team. We're here to help with questions about our platform, pricing, or enterprise solutions."
+  title={`Contacto - ${siteConfig.name}`}
+  description={`Ponte en contacto con el equipo de ${siteConfig.name}. Estamos aquí para ayudarte con preguntas sobre nuestra plataforma, precios o soluciones empresariales.`}
 >
   <PageHeader
-    title="Get in touch"
-    subtitle={`Have a question about ${siteConfig.name}? Want to discuss enterprise solutions? We'd love to hear from you.`}
+    title="Ponte en contacto"
+    subtitle={`¿Tienes alguna pregunta sobre ${siteConfig.name}? ¿Quieres discutir soluciones empresariales? Nos encantaría saber de ti.`}
     align="left"
     maxWidth="lg"
   />
@@ -23,14 +28,14 @@ const office = contact.address;
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
         <div>
-          <h2 class="text-2xl font-bold text-text mb-8">Send us a message</h2>
+          <h2 class="text-2xl font-bold text-text mb-8">Envíanos un mensaje</h2>
           <ContactForm />
         </div>
 
         <div class="space-y-8">
           <!-- Contact Methods -->
           <div>
-            <h2 class="text-2xl font-bold text-text mb-4">Other ways to reach us</h2>
+            <h2 class="text-2xl font-bold text-text mb-4">Otras formas de contactarnos</h2>
             <div class="space-y-3">
               {
                 contactMethods.map((method) => (
@@ -48,8 +53,8 @@ const office = contact.address;
 
           <!-- Our Office -->
           <div>
-            <h2 class="text-2xl font-bold text-text mb-4">Our office</h2>
-            <div class="flex items-start gap-3 text-text-muted">
+            <h2 class="text-2xl font-bold text-text mb-4">Nuestra oficina</h2>
+            <div class="flex items-start gap-3 text-text-muted mb-6">
               <Icon name="lucide:map-pin" class="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
               <address class="not-italic">
                 {office.street}<br />
@@ -58,11 +63,17 @@ const office = contact.address;
                 {office.country}
               </address>
             </div>
+            
+            <Map 
+              client:only="react" 
+              routes={routes} 
+              pointsOfInterest={pointsOfInterest}
+            /> 
           </div>
 
           <!-- FAQ Mini -->
           <div>
-            <h2 class="text-2xl font-bold text-text mb-4">Common questions</h2>
+            <h2 class="text-2xl font-bold text-text mb-4">Preguntas comunes</h2>
             <div class="space-y-4">
               {
                 contactFAQs.map((faq) => (
@@ -77,7 +88,7 @@ const office = contact.address;
               href="/faq"
               class="inline-flex items-center gap-1 text-primary hover:underline mt-4 text-sm font-medium"
             >
-              View all FAQs
+              Ver todas las preguntas frecuentes
               <Icon name="lucide:arrow-right" class="w-4 h-4" />
             </a>
           </div>

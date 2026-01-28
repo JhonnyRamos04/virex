@@ -1,0 +1,88 @@
+---
+import MarketingLayout from '@/layouts/MarketingLayout.astro';
+import { Icon } from 'astro-icon/components';
+import { siteConfig } from '@/config';
+
+const paymentMethods = [
+  {
+    id: 'zelle',
+    name: 'Zelle',
+    icon: 'simple-icons:zelle',
+    description: 'Transferencia rápida y segura',
+    details: 'pagos@goflowtrips.com',
+    color: 'bg-indigo-600',
+  },
+  {
+    id: 'pago-movil',
+    name: 'Pago Móvil',
+    icon: 'lucide:smartphone',
+    description: 'Banco Mercantil',
+    details: '0414-1234567 / CI: 12.345.678',
+    color: 'bg-blue-600',
+  },
+  {
+    id: 'transfer',
+    name: 'Transferencia',
+    icon: 'lucide:building-2',
+    description: 'Bancos Nacionales',
+    details: '0105-0000-00-0000000000',
+    color: 'bg-green-600',
+  },
+  {
+    id: 'paypal',
+    name: 'PayPal',
+    icon: 'simple-icons:paypal',
+    description: 'Pagos internacionales',
+    details: 'pagos@goflowtrips.com (+5%)',
+    color: 'bg-blue-800',
+  },
+];
+
+const { searchParams } = Astro.url;
+const plan = searchParams.get('plan') || 'plan';
+const amount = searchParams.get('amount');
+---
+
+<MarketingLayout
+  title={`Seleccionar Método de Pago - ${siteConfig.name}`}
+  description="Elige tu método de pago preferido para completar la reserva."
+>
+  <div class="bg-surface relative overflow-hidden">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-text mb-4">Finaliza tu Reserva</h1>
+            <p class="text-lg text-text-muted">
+                Estás adquiriendo el <span class="font-semibold text-primary capitalize">{plan}</span>
+                {amount && <span class="font-semibold"> por ${amount}</span>}.
+                Selecciona cómo deseas pagar.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {
+                paymentMethods.map((method) => (
+                    <a 
+                        href={`/payment/upload?method=${method.id}&plan=${plan}`} 
+                        class="group relative flex flex-col items-center p-8 bg-background border border-border rounded-xl hover:border-primary hover:shadow-lg transition-all text-center"
+                    >
+                        <div class={`w-16 h-16 flex items-center justify-center rounded-full mb-4 text-white ${method.color}`}>
+                            <Icon name={method.icon} class="w-8 h-8" />
+                        </div>
+                        <h3 class="text-xl font-semibold text-text mb-2">{method.name}</h3>
+                        <p class="text-sm text-text-muted mb-4">{method.description}</p>
+                        <div class="text-xs bg-surface-2 px-3 py-1 rounded-full text-text-muted font-mono">
+                            {method.details}
+                        </div>
+                    </a>
+                ))
+            }
+        </div>
+
+        <div class="mt-12 text-center">
+            <p class="text-sm text-text-muted">
+                ¿Tienes problemas con el pago? <a href="/contact" class="text-primary hover:underline">Contáctanos</a>
+            </p>
+        </div>
+    </div>
+  </div>
+</MarketingLayout>

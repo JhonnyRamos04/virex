@@ -1,0 +1,50 @@
+---
+/**
+ * Admin Payments Dashboard
+ *
+ * @description
+ * Allows admins to view all payments, filter by status, and 
+ * verify or reject pending payments.
+ */
+import DashboardLayout from '@/layouts/DashboardLayout.astro';
+import { Icon } from 'astro-icon/components';
+---
+
+<DashboardLayout
+  title="Administración de Pagos"
+  description="Gestión financiera"
+  breadcrumbs={[
+    { label: 'Panel', href: '/dashboard' },
+    { label: 'Admin', href: '/dashboard/admin' },
+    { label: 'Pagos' }
+  ]}
+>
+  <div class="admin-page">
+    <div class="page-header">
+      <h1 class="text-3xl font-bold text-text mb-2">Gestión de Pagos</h1>
+      <p class="text-text-muted">Verifica y administra todos los pagos del sistema.</p>
+    </div>
+
+    <!-- Admin Payment Manager React Component -->
+    <div id="admin-payment-root"></div>
+  </div>
+</DashboardLayout>
+
+<script>
+  import React from 'react';
+  import { createRoot } from 'react-dom/client';
+  import { AdminPaymentManager } from '@/components/admin/AdminPaymentManager';
+
+  const root = document.getElementById('admin-payment-root');
+  if (root) {
+    createRoot(root).render(React.createElement(AdminPaymentManager));
+  }
+</script>
+
+<style>
+  .admin-page {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+</style>

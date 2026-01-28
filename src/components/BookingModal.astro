@@ -1,0 +1,146 @@
+---
+// Booking Modal Component
+---
+
+<div id="booking-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center p-4">
+  <div class="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+    <div class="p-6">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-2xl font-bold text-black dark:text-white">Reservar Viaje</h3>
+        <button 
+          onclick="closeBookingForm()"
+          class="text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div class="mb-6 p-4 bg-blue-50 rounded-lg">
+        <div class="text-sm text-gray-600 dark:text-gray-300 mb-1">Destino seleccionado:</div>
+        <div id="modal-destination-title" class="text-lg font-semibold text-black dark:text-white"></div>
+        <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">Precio: <span id="modal-destination-price" class="font-semibold text-primary-600"></span></div>
+      </div>
+
+      <form id="booking-form" class="space-y-4">
+        <input type="hidden" id="destino-id" name="destino_id" value="">
+        
+        <div>
+          <label for="nombre" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+            Nombre Completo *
+          </label>
+          <input 
+            type="text" 
+            id="nombre" 
+            name="nombre" 
+            required
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            placeholder="Ingresa tu nombre completo"
+          >
+        </div>
+
+        <div>
+          <label for="direccion" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+            Dirección *
+          </label>
+          <textarea 
+            id="direccion" 
+            name="direccion" 
+            required
+            rows="3"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            placeholder="Ingresa tu dirección completa"
+          ></textarea>
+        </div>
+
+        <div>
+          <label for="correo" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+            Correo Electrónico *
+          </label>
+          <input 
+            type="email" 
+            id="correo" 
+            name="correo" 
+            required
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            placeholder="tu@email.com"
+          >
+        </div>
+
+        <div>
+          <label for="whatsapp" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+            Teléfono WhatsApp *
+          </label>
+          <input 
+            type="tel" 
+            id="whatsapp" 
+            name="whatsapp" 
+            required
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            placeholder="+52 123 456 7890"
+          >
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Incluye el código de país para contacto por WhatsApp</p>
+        </div>
+
+        <div class="flex gap-3 pt-4">
+          <button 
+            type="submit"
+            class="flex-1 bg-primary-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-primary-700 transition-colors duration-200"
+          >
+            Confirmar Reserva
+          </button>
+          <button 
+            type="button"
+            onclick="closeBookingForm()"
+            class="flex-1 bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200 py-3 px-4 rounded-lg font-semibold hover:bg-gray-300 transition-colors duration-200"
+          >
+            Cancelar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  function closeBookingForm() {
+    const modal = document.getElementById('booking-modal');
+    if (modal) {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      document.body.style.overflow = 'auto';
+    }
+  }
+
+  // Make function globally available
+  (globalThis as typeof window).closeBookingForm = closeBookingForm;
+
+  document.getElementById('booking-form')?.addEventListener('submit', async function(e: Event) {
+    e.preventDefault();
+    
+    const formData = new FormData(e.target as HTMLFormElement);
+    const data = Object.fromEntries(formData.entries());
+    
+    try {
+      const response = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+      
+      if (response.ok) {
+        alert('¡Reserva confirmada! Nos pondremos en contacto contigo pronto.');
+        closeBookingForm();
+        (e.target as HTMLFormElement).reset();
+      } else {
+        alert('Hubo un error al procesar tu reserva. Por favor intenta nuevamente.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Hubo un error al procesar tu reserva. Por favor intenta nuevamente.');
+    }
+  });
+</script>

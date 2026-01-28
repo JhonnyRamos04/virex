@@ -1,7 +1,7 @@
 ---
-quote: "We migrated from our custom CI/CD setup to Virex in a weekend. The auto-detection just worked, and we deleted hundreds of lines of pipeline configuration."
+quote: "Me encanto la experiencia, la atencion y el trato que me dieron, sin duda volveré a usar sus servicios"
 author: "Marcus Johnson"
-role: "Senior Developer"
+role: "Cliente"
 company: "Buildkit"
 avatar: "/images/testimonials/marcus-johnson.webp"
 featured: false

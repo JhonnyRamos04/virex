@@ -102,7 +102,7 @@ const variantClasses = {
         data-success-message={successMessage}
         data-error-message={errorMessage}
       >
-        <label for={`${formId}-email`} class="sr-only">Email address</label>
+        <label for={`${formId}-email`} class="sr-only">Correo Electrónico</label>
         <input
           type="email"
           id={`${formId}-email`}
@@ -136,8 +136,8 @@ const variantClasses = {
     const submitBtn = formEl.querySelector('button[type="submit"]') as HTMLButtonElement;
 
     // Get configurable messages from data attributes
-    const successMessage = formEl.dataset.successMessage || 'Thanks for subscribing!';
-    const errorMessage = formEl.dataset.errorMessage || 'Something went wrong. Please try again.';
+    const successMessage = formEl.dataset.successMessage || '¡Gracias por suscribirte!';
+    const errorMessage = formEl.dataset.errorMessage || 'Algo salió mal. Por favor intenta de nuevo.';
 
     formEl.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -147,7 +147,7 @@ const variantClasses = {
 
       const originalText = submitBtn.textContent;
       submitBtn.disabled = true;
-      submitBtn.textContent = 'Subscribing...';
+      submitBtn.textContent = 'Suscribiendo...';
 
       try {
         const action = formEl.action;

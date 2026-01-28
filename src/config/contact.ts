@@ -10,15 +10,15 @@ import type { ContactInfo, ContactMethod, ContactFAQ } from '../lib/types';
 
 /** Contact information used across contact page and legal pages */
 export const contact: ContactInfo = {
-  email: 'hello@virex.example.com',
-  supportEmail: 'support@virex.example.com',
-  salesEmail: 'sales@virex.example.com',
+  email: 'hola@goflowtrips.com',
+  supportEmail: 'soporte@goflowtrips.com',
+  salesEmail: 'ventas@goflowtrips.com',
   address: {
-    street: '123 Market Street, Suite 400',
-    city: 'San Francisco',
-    state: 'CA',
-    zip: '94102',
-    country: 'United States',
+    street: 'Av constitucion',
+    city: 'Maracay',
+    state: 'Aragua',
+    zip: '2101',
+    country: 'Venezuela',
   },
 };
 
@@ -33,30 +33,30 @@ export const contactMethods: ContactMethod[] = [
   {
     icon: 'simple-icons:discord',
     label: 'Discord',
-    value: 'Join Discord',
-    href: 'https://discord.gg/virex',
+    value: 'Únete a Discord',
+    href: 'https://discord.gg/goflowtrips',
   },
   {
     icon: 'lucide:twitter',
     label: 'Twitter',
-    value: '@virex',
-    href: 'https://twitter.com/virex',
+    value: '@goflowtrips',
+    href: 'https://twitter.com/goflowtrips',
   },
 ];
 
 /** FAQ items displayed on the contact page */
 export const contactFAQs: ContactFAQ[] = [
   {
-    question: "What's your typical response time?",
-    answer: 'We respond to most inquiries within 24 hours during business days.',
+    question: '¿Cuál es tu tiempo de respuesta típico?',
+    answer: 'Respondemos a la mayoría de las consultas dentro de 24 horas durante los días laborables.',
   },
   {
-    question: 'Do you offer phone support?',
+    question: '¿Ofrecen soporte telefónico?',
     answer:
-      'Phone support is available for Enterprise customers. Others can reach us via email or Discord.',
+      'El soporte telefónico está disponible para clientes Empresariales. Los demás pueden contactarnos por email o Discord.',
   },
   {
-    question: 'How do I report a bug?',
-    answer: 'Use the form with "Technical support" as subject, or open an issue on our GitHub.',
+    question: '¿Cómo reporto un problema técnico?',
+    answer: 'Usa el formulario con "Soporte técnico" como asunto, o abre un issue en nuestro GitHub.',
   },
 ];

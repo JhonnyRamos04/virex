@@ -1,140 +1,147 @@
 ---
 /**
- * Dashboard Overview Page
+ * Travel Dashboard Overview Page
  *
  * @description
- * Main dashboard page displaying key metrics, charts, and recent activity.
- * Uses sample data from dashboard-data.ts for demonstration purposes.
+ * Simplified main dashboard showing key metrics and quick access to modules.
+ * Content has been separated into dedicated module pages accessible via sidebar.
  *
  * Features:
- * - 4 StatCards showing key metrics (Total Projects, Active Users, Revenue, API Calls)
- * - Line chart showing 7-day project creation trend
- * - Recent activity section with latest project updates
+ * - 4 StatCards showing travel metrics
+ * - Quick access cards to main modules
+ * - Recent activity summary
+ * - Welcome component with lead data integration
  */
 import DashboardLayout from '@/layouts/DashboardLayout.astro';
-import StatCard from '@dashboard-ui/StatCard.astro';
-import Chart from '@dashboard-ui/Chart.astro';
 import Card from '@dashboard-ui/Card.astro';
-import { getMetrics, getChartData, getProjects } from '@/lib/dashboard-data';
+import DashboardWelcome from '@dashboard/DashboardWelcome.astro';
+import {  getUpcomingTrips } from '@/lib/travel-data';
 import { Icon } from 'astro-icon/components';
 
-// Get sample data
-const metrics = getMetrics();
-const chartData = getChartData();
-const projects = getProjects();
-
-// Get recent activity (last 5 updated projects)
-const recentActivity = projects
-  .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
-  .slice(0, 5);
+// Get travel data
+const upcomingTrips = getUpcomingTrips();
+const nextTrip = upcomingTrips.length > 0 ? upcomingTrips[0] : null;
 
 // Format date for display
 function formatDate(date: Date): string {
   const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
+  const diffMs = date.getTime() - now.getTime();
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-  if (diffDays === 0) return 'Today';
-  if (diffDays === 1) return 'Yesterday';
-  if (diffDays < 7) return `${diffDays} days ago`;
+  if (diffDays === 0) return 'Hoy';
+  if (diffDays === 1) return 'Mañana';
+  if (diffDays < 7) return `En ${diffDays} días`;
+  if (diffDays < 30) return `En ${Math.floor(diffDays / 7)} semanas`;
 
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-}
-
-// Get status badge color
-function getStatusColor(status: string): string {
-  switch (status) {
-    case 'active':
-      return 'status-active';
-    case 'archived':
-      return 'status-archived';
-    case 'draft':
-      return 'status-draft';
-    default:
-      return '';
-  }
+  return date.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' });
 }
 ---
 
 <DashboardLayout
-  title="Dashboard Overview"
-  description="View your analytics and metrics"
-  breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Overview' }]}
+  title="Panel de Viajes"
+  description="Gestiona tus viajes y reservas"
+  breadcrumbs={[{ label: 'Panel', href: '/dashboard' }, { label: 'Viajes' }]}
 >
-  <div class="dashboard-overview">
+  <div class="travel-dashboard">
     <!-- Page Header -->
-    <div class="page-header">
-      <h1 class="page-title">Dashboard Overview</h1>
-      <p class="page-description">
-        Welcome back! Here's what's happening with your projects today.
-      </p>
-    </div>
+    <DashboardWelcome />
 
-    <!-- Metrics Grid -->
-    <div class="metrics-grid">
-      {
-        metrics.map((metric) => (
-          <StatCard
-            title={metric.title}
-            value={metric.value}
-            trend={metric.trend}
-            icon={metric.icon}
-            description={metric.description}
-          />
-        ))
-      }
-    </div>
+   
 
-    <!-- Chart Section -->
-    <Card title="Project Activity" description="Projects created over the last 7 days">
-      <Chart
-        type="area"
-        data={chartData}
-        height={300}
-        ariaLabel="Line chart showing project creation trend over the last 7 days"
-      />
-    </Card>
+    <!-- Next Trip Banner -->
+    {nextTrip && (
+      <div class="next-trip-banner">
+        <div class="banner-icon">
+          <Icon name="lucide:plane" />
+        </div>
+        <div class="banner-content">
+          <h3 class="banner-title">Próximo Viaje: {nextTrip.title}</h3>
+          <p class="banner-text">
+            {nextTrip.destination} • {formatDate(nextTrip.date)}
+          </p>
+        </div>
+        <a href="/dashboard/my-destination" class="banner-button">
+          Ver Detalles
+          <Icon name="lucide:arrow-right" />
+        </a>
+      </div>
+    )}
 
-    <!-- Recent Activity Section -->
-    <Card title="Recent Activity" description="Latest project updates">
-      <div class="activity-list">
-        {
-          recentActivity.map((project) => (
-            <div class="activity-item">
-              <div class="activity-icon">
-                <Icon name="lucide:folder" />
-              </div>
-              <div class="activity-content">
-                <div class="activity-header">
-                  <a href={`/dashboard/projects/${project.id}`} class="activity-title">
-                    {project.name}
-                  </a>
-                  <span class:list={['activity-status', getStatusColor(project.status)]}>
-                    {project.status}
-                  </span>
-                </div>
-                <p class="activity-description">{project.description}</p>
-                <div class="activity-meta">
-                  <span class="activity-owner">
-                    <Icon name="lucide:user" />
-                    {project.owner}
-                  </span>
-                  <span class="activity-date">
-                    <Icon name="lucide:clock" />
-                    Updated {formatDate(project.updatedAt)}
-                  </span>
-                </div>
-              </div>
-            </div>
-          ))
-        }
+    <!-- Quick Access Modules -->
+    <Card title="Acceso Rápido" description="Navega a las secciones principales">
+      <div class="modules-grid">
+        <a href="/dashboard/calendar" class="module-card">
+          <div class="module-icon module-icon-calendar">
+            <Icon name="lucide:calendar" />
+          </div>
+          <div class="module-content">
+            <h3 class="module-title">Calendario</h3>
+            <p class="module-description">Planifica tus actividades de viaje</p>
+          </div>
+          <Icon name="lucide:chevron-right" class="module-arrow" />
+        </a>
+
+        <a href="/dashboard/my-destination" class="module-card">
+          <div class="module-icon module-icon-destination">
+            <Icon name="lucide:map-pin" />
+          </div>
+          <div class="module-content">
+            <h3 class="module-title">Mi Destino</h3>
+            <p class="module-description">Detalles de tu próxima aventura</p>
+          </div>
+          <Icon name="lucide:chevron-right" class="module-arrow" />
+        </a>
+
+        <a href="/dashboard/tourist-map" class="module-card">
+          <div class="module-icon module-icon-map">
+            <Icon name="lucide:map" />
+          </div>
+          <div class="module-content">
+            <h3 class="module-title">Mapa Turístico</h3>
+            <p class="module-description">Explora puntos de interés</p>
+          </div>
+          <Icon name="lucide:chevron-right" class="module-arrow" />
+        </a>
+
+        <a href="/dashboard/payments" class="module-card">
+          <div class="module-icon module-icon-payments">
+            <Icon name="lucide:credit-card" />
+          </div>
+          <div class="module-content">
+            <h3 class="module-title">Pagos</h3>
+            <p class="module-description">Historial de transacciones</p>
+          </div>
+          <Icon name="lucide:chevron-right" class="module-arrow" />
+        </a>
+
+        <a href="/dashboard/destinations" class="module-card">
+          <div class="module-icon module-icon-destinations">
+            <Icon name="lucide:globe" />
+          </div>
+          <div class="module-content">
+            <h3 class="module-title">Destinos</h3>
+            <p class="module-description">Explora lugares populares</p>
+          </div>
+          <Icon name="lucide:chevron-right" class="module-arrow" />
+        </a>
+
+        <a href="/dashboard/settings" class="module-card">
+          <div class="module-icon module-icon-settings">
+            <Icon name="lucide:settings" />
+          </div>
+          <div class="module-content">
+            <h3 class="module-title">Configuración</h3>
+            <p class="module-description">Ajusta tu perfil y preferencias</p>
+          </div>
+          <Icon name="lucide:chevron-right" class="module-arrow" />
+        </a>
       </div>
     </Card>
   </div>
 </DashboardLayout>
 
 <style>
-  .dashboard-overview {
+  .travel-dashboard {
     display: flex;
     flex-direction: column;
     gap: 2rem;
@@ -148,14 +155,14 @@ function getStatusColor(status: string): string {
   .page-title {
     font-size: 2rem;
     font-weight: 700;
-    color: var(--color-text, #000);
+    color: var(--color-text);
     margin: 0 0 0.5rem 0;
     line-height: 1.2;
   }
 
   .page-description {
     font-size: 1rem;
-    color: var(--color-text-muted, #6b7280);
+    color: var(--color-text-muted);
     margin: 0;
   }
 
@@ -178,179 +185,190 @@ function getStatusColor(status: string): string {
     }
   }
 
-  /* Activity List */
-  .activity-list {
+  /* Next Trip Banner */
+  .next-trip-banner {
     display: flex;
-    flex-direction: column;
-    gap: 0;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, var(--color-primary) 0%, color-mix(in srgb, var(--color-primary) 80%, black) 100%);
+    border-radius: var(--radius-lg, 1rem);
+    color: white;
   }
 
-  .activity-item {
-    display: flex;
-    gap: 1rem;
-    padding: 1rem 0;
-    border-bottom: 1px solid var(--color-border, #e5e7eb);
-  }
-
-  .activity-item:last-child {
-    border-bottom: none;
-    padding-bottom: 0;
-  }
-
-  .activity-item:first-child {
-    padding-top: 0;
-  }
-
-  .activity-icon {
-    width: 2.5rem;
-    height: 2.5rem;
+  .banner-icon {
+    width: 3rem;
+    height: 3rem;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--color-background, #f9fafb);
+    background: rgba(255, 255, 255, 0.2);
     border-radius: var(--radius-md, 0.5rem);
-    color: var(--color-primary, #6366f1);
   }
 
-  .activity-icon :global(svg) {
-    width: 1.25rem;
-    height: 1.25rem;
+  .banner-icon :global(svg) {
+    width: 1.5rem;
+    height: 1.5rem;
   }
 
-  .activity-content {
+  .banner-content {
+    flex: 1;
+  }
+
+  .banner-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin: 0 0 0.25rem 0;
+  }
+
+  .banner-text {
+    font-size: 0.875rem;
+    margin: 0;
+    opacity: 0.9;
+  }
+
+  .banner-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    background: white;
+    color: var(--color-primary);
+    text-decoration: none;
+    border-radius: var(--radius-md, 0.5rem);
+    font-weight: 600;
+    transition: all 150ms ease;
+    white-space: nowrap;
+  }
+
+  .banner-button:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: translateX(2px);
+  }
+
+  .banner-button :global(svg) {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  /* Modules Grid */
+  .modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+  }
+
+  .module-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
+    background: var(--color-background, #f9fafb);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md, 0.5rem);
+    text-decoration: none;
+    transition: all 150ms ease;
+  }
+
+  .module-card:hover {
+    background: var(--color-surface, #fff);
+    border-color: var(--color-primary);
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .module-icon {
+    width: 3rem;
+    height: 3rem;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md, 0.5rem);
+    color: white;
+  }
+
+  .module-icon :global(svg) {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .module-icon-calendar {
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  }
+
+  .module-icon-destination {
+    background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+  }
+
+  .module-icon-map {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  }
+
+  .module-icon-payments {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  }
+
+  .module-icon-destinations {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  }
+
+  .module-icon-settings {
+    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+  }
+
+  .module-content {
     flex: 1;
     min-width: 0;
   }
 
-  .activity-header {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.25rem;
-    flex-wrap: wrap;
-  }
-
-  .activity-title {
-    font-size: 0.9375rem;
+  .module-title {
+    font-size: 1rem;
     font-weight: 600;
-    color: var(--color-text, #000);
-    text-decoration: none;
-    transition: color 150ms ease;
+    color: var(--color-text);
+    margin: 0 0 0.25rem 0;
   }
 
-  .activity-title:hover {
-    color: var(--color-primary, #6366f1);
-  }
-
-  .activity-status {
-    font-size: 0.75rem;
-    font-weight: 600;
-    padding: 0.25rem 0.625rem;
-    border-radius: var(--radius-full, 9999px);
-    text-transform: capitalize;
-  }
-
-  .status-active {
-    color: var(--color-success, #10b981);
-    background: color-mix(in srgb, var(--color-success, #10b981) 10%, transparent);
-  }
-
-  .status-archived {
-    color: var(--color-text-muted, #6b7280);
-    background: color-mix(in srgb, var(--color-text-muted, #6b7280) 10%, transparent);
-  }
-
-  .status-draft {
-    color: var(--color-warning, #f59e0b);
-    background: color-mix(in srgb, var(--color-warning, #f59e0b) 10%, transparent);
-  }
-
-  .activity-description {
+  .module-description {
     font-size: 0.875rem;
-    color: var(--color-text-muted, #6b7280);
-    margin: 0 0 0.5rem 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    color: var(--color-text-muted);
+    margin: 0;
   }
 
-  .activity-meta {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    font-size: 0.8125rem;
-    color: var(--color-text-muted, #6b7280);
-    flex-wrap: wrap;
+  .module-arrow {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+    color: var(--color-text-muted);
+    transition: all 150ms ease;
   }
 
-  .activity-owner,
-  .activity-date {
-    display: flex;
-    align-items: center;
-    gap: 0.375rem;
+  .module-card:hover .module-arrow {
+    color: var(--color-primary);
+    transform: translateX(4px);
   }
 
-  .activity-owner :global(svg),
-  .activity-date :global(svg) {
-    width: 0.875rem;
-    height: 0.875rem;
-  }
-
-  /* Responsive adjustments */
+  /* Responsive */
   @media (max-width: 640px) {
     .page-title {
       font-size: 1.75rem;
     }
 
-    .page-description {
-      font-size: 0.9375rem;
+    .next-trip-banner {
+      flex-direction: column;
+      text-align: center;
     }
 
-    .activity-item {
-      gap: 0.75rem;
-    }
-
-    .activity-icon {
-      width: 2rem;
-      height: 2rem;
-    }
-
-    .activity-icon :global(svg) {
-      width: 1rem;
-      height: 1rem;
-    }
-
-    .activity-description {
-      white-space: normal;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
+    .modules-grid {
+      grid-template-columns: 1fr;
     }
   }
 
-  /* Dark mode support */
-  @media (prefers-color-scheme: dark) {
-    .activity-icon {
-      background: var(--color-background, #111827);
-    }
-
-    .activity-item {
-      border-bottom-color: var(--color-border, #374151);
-    }
-  }
-
-  /* Focus visible styles for accessibility */
-  .activity-title:focus-visible {
-    outline: 2px solid var(--color-primary, #6366f1);
+  /* Focus visible styles */
+  .module-card:focus-visible,
+  .banner-button:focus-visible {
+    outline: 2px solid var(--color-primary);
     outline-offset: 2px;
-    border-radius: var(--radius-sm, 0.375rem);
-  }
-
-  /* Reduced motion support */
-  @media (prefers-reduced-motion: reduce) {
-    .activity-title {
-      transition: none;
-    }
   }
 </style>

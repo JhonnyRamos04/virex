@@ -230,3 +230,19 @@ export interface BillingHistoryItem {
   status: 'paid' | 'pending' | 'failed';
   invoiceUrl?: string;
 }
+
+export interface PointOfInterest {
+  id: string;
+  location: [number, number];
+  title: string;
+  description: string;
+  type: 'hotel' | 'monument' | 'restaurant';
+  image: string;
+}
+
+export interface MapRoute {
+  id: string;
+  points: [number, number][];
+  color: string;
+  name: string;
+}

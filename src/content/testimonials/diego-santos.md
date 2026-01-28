@@ -1,7 +1,7 @@
 ---
-quote: "Virex removed the friction we had between development and security. Audit logs, preview URLs, and role permissions are rock solid. Our SOC2 review was the easiest yet."
+quote: "Me encanto la experiencia, la atencion y el trato que me dieron, sin duda volveré a usar sus servicios"
 author: "Diego Santos"
-role: "Security Lead"
+role: "Cliente"
 company: "TrustLayer"
 avatar: "/images/testimonials/diego-santos.webp"
 featured: true

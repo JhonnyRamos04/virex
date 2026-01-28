@@ -1,0 +1,198 @@
+---
+// Dashboard Welcome Component with Lead Data
+---
+
+<div class="bg-linear-to-r from-primary to-primary-dark text-white rounded-2xl p-8 mb-8">
+  <div class="flex flex-col md:flex-row justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-bold mb-2">¡Bienvenido de nuevo!</h1>
+      <p class="text-primary-100" id="welcome-message">Estamos listos para encontrar tu próximo viaje</p>
+    </div>
+  </div>
+</div>
+
+<!-- Pending Search Alert -->
+<div id="pending-search-alert" class="hidden bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 mb-8">
+  <div class="flex items-start gap-4">
+    <div class="w-10 h-10 bg-zinc-100 dark:bg-zinc-800 rounded-full flex items-center justify-center flex-shrink-0">
+      <svg class="w-5 h-5 text-zinc-600 dark:text-zinc-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+      </svg>
+    </div>
+    <div class="flex-1">
+      <h3 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-2">Continúa tu búsqueda</h3>
+      <p class="text-zinc-700 dark:text-zinc-300 mb-4" id="pending-search-details">
+        Estabas buscando destinos para tu viaje
+      </p>
+      <div class="flex gap-3">
+        <button onclick="continueSearch()" class="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-white px-4 py-2 rounded-lg font-medium transition-colors">
+          Ver Destinos
+        </button>
+        <button onclick="clearPendingSearch()" class="text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200 px-4 py-2 rounded-lg font-medium transition-colors">
+          Ignorar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+  <div class="bg-white dark:bg-surface rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-800">
+    <div class="flex items-center gap-4 mb-4">
+      <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+        <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+        </svg>
+      </div>
+      <div>
+        <h3 class="font-semibold text-gray-600">Buscar Viajes</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Encuentra tu destino perfecto</p>
+      </div>
+    </div>
+    <button onclick="goToSearch()" class="w-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-white px-4 py-2 rounded-lg font-medium transition-colors">
+      Explorar Destinos
+    </button>
+  </div>
+
+  <div class="bg-white dark:bg-surface rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-800">
+    <div class="flex items-center gap-4 mb-4">
+      <div class="w-12 h-12 bg-green/10 rounded-full flex items-center justify-center">
+        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+      </div>
+      <div>
+        <h3 class="font-semibold text-gray-600">Mis Reservas</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Gestiona tus viajes</p>
+      </div>
+    </div>
+    <button onclick="goToReservations()" class="w-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-white px-4 py-2 rounded-lg font-medium transition-colors">
+      Ver Reservas
+    </button>
+  </div>
+
+  <div class="bg-white dark:bg-surface rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-800">
+    <div class="flex items-center gap-4 mb-4">
+      <div class="w-12 h-12 bg-purple/10 rounded-full flex items-center justify-center">
+        <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+        </svg>
+      </div>
+      <div>
+        <h3 class="font-semibold text-gray-600">Mi Perfil</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Actualiza tus datos</p>
+      </div>
+    </div>
+    <button onclick="goToProfile()" class="w-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-white px-4 py-2 rounded-lg font-medium transition-colors">
+      Editar Perfil
+    </button>
+  </div>
+</div>
+
+<script>
+  // Load user session and pending search data
+  document.addEventListener('DOMContentLoaded', function() {
+    loadUserData();
+    checkPendingSearch();
+  });
+
+  function loadUserData() {
+    // Get user data from backend using session token
+    const sessionToken = document.cookie.match(/session_token=([^;]+)/)?.[1];
+    
+    if (sessionToken) {
+      // Fetch user data from backend
+      fetch('http://localhost:8000/auth/me/', {
+        headers: {
+          'Authorization': `Bearer ${sessionToken}`
+        }
+      })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error('Failed to fetch user data');
+      })
+      .then(({ user }) => {
+        const userName = document.getElementById('user-name');
+        const userEmail = document.getElementById('user-email');
+        const welcomeMessage = document.getElementById('welcome-message');
+        
+        if (userName) userName.textContent = user.fullName || user.name || 'Usuario';
+        if (userEmail) userEmail.textContent = user.email || 'email@example.com';
+        
+        if (welcomeMessage) {
+          welcomeMessage.textContent = `¡Hola ${user.fullName?.split(' ')[0] || user.name?.split(' ')[0] || 'Usuario'}! Estamos listos para encontrar tu próximo viaje`;
+        }
+      })
+      .catch(error => {
+        console.error('Error loading user data:', error);
+        // Fallback to default values
+        const userName = document.getElementById('user-name');
+        const userEmail = document.getElementById('user-email');
+        if (userName) userName.textContent = 'Usuario';
+        if (userEmail) userEmail.textContent = 'email@example.com';
+      });
+    }
+  }
+
+  function checkPendingSearch() {
+    const pendingSearch = localStorage.getItem('pending_search');
+    
+    if (pendingSearch) {
+      const search = JSON.parse(pendingSearch);
+      const alert = document.getElementById('pending-search-alert');
+      const details = document.getElementById('pending-search-details');
+      
+      if (alert && details) {
+        let searchDetails = 'Estabas buscando';
+        
+        if (search.destination) {
+          searchDetails += ` destinos en "${search.destination}"`;
+        } else {
+          searchDetails += ' destinos';
+        }
+        
+        if (search.dates) {
+          searchDetails += ` para las fechas ${search.dates}`;
+        }
+        
+        if (search.guests) {
+          searchDetails += ` para ${search.guests}`;
+        }
+        
+        details.textContent = searchDetails;
+        alert.classList.remove('hidden');
+      }
+    }
+  }
+
+  function continueSearch() {
+    // Scroll to destinations section or redirect to home with search
+    window.location.href = '/#viajes';
+  }
+
+  function clearPendingSearch() {
+    localStorage.removeItem('pending_search');
+    const alert = document.getElementById('pending-search-alert');
+    if (alert) {
+      alert.classList.add('hidden');
+    }
+  }
+
+  function goToSearch() {
+    window.location.href = '/#viajes';
+  }
+
+  function goToReservations() {
+    // Navigate to reservations page
+    console.log('Navigate to reservations');
+  }
+
+  function goToProfile() {
+    // Navigate to profile page
+    console.log('Navigate to profile');
+  }
+</script>

@@ -1,5 +1,5 @@
 ---
-quote: "We ship features twice as fast now. Virex lets us focus on product value instead of boilerplate and hosting headaches. It's easily the best decision we made this year."
+quote: "Como es posible que exista algo tan increíble?"
 author: "Hannah Brooks"
 role: "Lead Product Engineer"
 company: "Flowmatic"

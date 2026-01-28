@@ -22,45 +22,56 @@ export const dashboardNavigation: DashboardNavSection[] = [
   {
     items: [
       {
-        label: 'Overview',
+        label: 'Vista General',
         href: '/dashboard',
         icon: 'layout-dashboard',
       },
     ],
   },
   {
-    title: 'Management',
+    title: 'Gestión',
     items: [
       {
-        label: 'Projects',
-        href: '/dashboard/projects',
-        icon: 'folder',
+        label: 'Calendario',
+        href: '/dashboard/calendar',
+        icon: 'calendar',
       },
       {
-        label: 'Team',
-        href: '/dashboard/settings/team',
-        icon: 'users',
+        label: 'Mi Destino',
+        href: '/dashboard/my-destination',
+        icon: 'map-pin',
+      },
+      {
+        label: 'Mapa Turístico',
+        href: '/dashboard/tourist-map',
+        icon: 'map',
+      },
+      {
+        label: 'Pagos',
+        href: '/dashboard/payments',
+        icon: 'credit-card',
+      },
+      {
+        label: 'Destinos',
+        href: '/dashboard/destinations',
+        icon: 'globe',
       },
     ],
   },
   {
-    title: 'Settings',
+    title: 'Configuraciones',
     items: [
       {
-        label: 'Settings',
+        label: 'Configuraciones',
         href: '/dashboard/settings',
         icon: 'settings',
         children: [
           {
-            label: 'Profile',
+            label: 'Perfil',
             href: '/dashboard/settings/profile',
             icon: 'user',
           },
-          {
-            label: 'Billing',
-            href: '/dashboard/settings/billing',
-            icon: 'credit-card',
-          },
+          
         ],
       },
     ],
