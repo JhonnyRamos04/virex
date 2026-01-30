@@ -342,18 +342,25 @@ const {
     e.preventDefault();
     
     // Get search data
-    const destinationSelect = document.getElementById('destination') as HTMLSelectElement;
+    const destinationSelect = document.getElementById('destination') as HTMLSelectElement | null;
+    const datesInputEl = document.getElementById('dates') as HTMLInputElement | null;
+    const guestsSelect = document.getElementById('guests') as HTMLSelectElement | null;
+
     const searchData = {
       destination: destinationSelect?.value || '',
-      dates: datesInput?.value || '',
-      guests: guestsInput?.value || '2 Huéspedes'
+      dates: datesInputEl?.value || '',
+      guests: guestsSelect?.value || '2 Huéspedes'
     };
 
-    // Check if user has valid session
-    const sessionToken = document.cookie.match(/session_token=([^;]+)/)?.[1];
+    // Check for valid session (cookie OR localStorage)
+    const sessionToken = document.cookie.match(/session_token=([^;]+)/)?.[1] || localStorage.getItem('authToken');
     
     if (sessionToken) {
-      // User has valid session, redirect to dashboard with search data
+      // User has valid session, ensure cookie is set if we only have localStorage
+      if (!document.cookie.includes('session_token')) {
+        document.cookie = `session_token=${sessionToken}; path=/; max-age=${7 * 24 * 60 * 60}; secure; samesite=strict`;
+      }
+      // Redirect to dashboard with search data
       localStorage.setItem('pending_search', JSON.stringify(searchData));
       window.location.href = '/dashboard';
     } else {
@@ -362,11 +369,15 @@ const {
     }
   });
 
-  function showRegistrationModal(searchData) {
+  function showRegistrationModal(searchData: any) {
     // Pre-fill hidden fields with search data
-    document.getElementById('registration-destination').value = searchData.destination;
-    document.getElementById('registration-dates').value = searchData.dates;
-    document.getElementById('registration-guests').value = searchData.guests;
+    const regDest = document.getElementById('registration-destination') as HTMLInputElement | null;
+    const regDates = document.getElementById('registration-dates') as HTMLInputElement | null;
+    const regGuests = document.getElementById('registration-guests') as HTMLInputElement | null;
+
+    if (regDest) regDest.value = searchData.destination;
+    if (regDates) regDates.value = searchData.dates;
+    if (regGuests) regGuests.value = searchData.guests;
     
     // Update search details in modal
     const searchDetails = document.getElementById('registration-search-details');
@@ -560,6 +571,10 @@ const {
       // Set session token cookie
       document.cookie = `session_token=${token}; path=/; max-age=${7 * 24 * 60 * 60}; secure; samesite=strict`;
       
+      // Sync with localStorage for AuthContext compatibility
+      localStorage.setItem('authToken', token);
+      localStorage.setItem('authUser', JSON.stringify(user));
+
       // Save pending search data
       localStorage.setItem('pending_search', JSON.stringify({
         destination: userData.destination,

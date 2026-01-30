@@ -1,0 +1,46 @@
+---
+/**
+ * PageHeader - Generic header component for pages
+ */
+
+interface Props {
+  title: string;
+  subtitle?: string;
+  align?: 'left' | 'center' | 'right';
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
+}
+
+const { 
+  title, 
+  subtitle, 
+  align = 'left', 
+  maxWidth = 'lg' 
+} = Astro.props;
+
+const alignClasses = {
+  left: 'text-left',
+  center: 'text-center mx-auto',
+  right: 'text-right ml-auto',
+};
+
+const maxWidthClasses = {
+  sm: 'max-w-xl',
+  md: 'max-w-3xl',
+  lg: 'max-w-4xl',
+  xl: 'max-w-5xl',
+  full: 'max-w-full',
+};
+---
+
+<header class:list={["py-16 px-4 sm:px-6 lg:px-8", alignClasses[align]]}>
+  <div class:list={[maxWidthClasses[maxWidth]]}>
+    <h1 class="text-4xl font-extrabold tracking-tight text-text sm:text-5xl lg:text-6xl">
+      {title}
+    </h1>
+    {subtitle && (
+      <p class="mt-6 text-xl text-text-muted">
+        {subtitle}
+      </p>
+    )}
+  </div>
+</header>
