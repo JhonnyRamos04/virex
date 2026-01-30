@@ -47,6 +47,11 @@ export const dashboardNavigation: DashboardNavSection[] = [
         icon: 'map',
       },
       {
+        label: 'Comunidad',
+        href: '/dashboard/community',
+        icon: 'users',
+      },
+      {
         label: 'Pagos',
         href: '/dashboard/payments',
         icon: 'credit-card',
@@ -71,7 +76,7 @@ export const dashboardNavigation: DashboardNavSection[] = [
             href: '/dashboard/settings/profile',
             icon: 'user',
           },
-          
+
         ],
       },
     ],

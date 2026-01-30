@@ -75,64 +75,100 @@ export const AdminPaymentManager: React.FC = () => {
         }
     };
 
+    const handleExportExcel = async () => {
+        const token = localStorage.getItem('authToken');
+        if (!token) return;
+        try {
+            const response = await fetch('http://localhost:8000/api/admin/export-excel/?type=pago', {
+                headers: { 'Authorization': `Token ${token}` }
+            });
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `reporte_pagos_${new Date().toISOString().split('T')[0]}.xlsx`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            } else {
+                alert("Error al exportar");
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
     if (loading) return <div>Cargando pagos del sistema...</div>;
     if (error) return <div className="text-red-600">{error}</div>;
 
     return (
-        <div className="bg-surface rounded-xl shadow-sm border border-border overflow-hidden">
-            <div className="overflow-x-auto">
-                <table className="w-full text-sm text-left">
-                    <thead className="bg-background border-b border-border text-text-muted font-medium">
-                        <tr>
-                            <th className="px-6 py-4">ID</th>
-                            <th className="px-6 py-4">Cliente</th>
-                            <th className="px-6 py-4">Monto ($)</th>
-                            <th className="px-6 py-4">Referencia</th>
-                            <th className="px-6 py-4">Método</th>
-                            <th className="px-6 py-4">Estado</th>
-                            <th className="px-6 py-4 text-right">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border">
-                        {payments.map(payment => (
-                            <tr key={payment.id} className="hover:bg-surface-2 transition-colors">
-                                <td className="px-6 py-4 font-medium text-text">#{payment.id}</td>
-                                <td className="px-6 py-4 text-text">{payment.reserva_cliente}</td>
-                                <td className="px-6 py-4 text-text font-bold">${parseFloat(payment.monto).toLocaleString()}</td>
-                                <td className="px-6 py-4 text-text-muted font-mono">{payment.referencia}</td>
-                                <td className="px-6 py-4 text-text">{payment.metodo_pago_nombre}</td>
-                                <td className="px-6 py-4">
-                                    <span className={`px-2 py-1 rounded-full text-xs font-semibold uppercase ${payment.estado === 'verificado' ? 'bg-green-100 text-green-700' :
+        <div className="space-y-4">
+            <div className="flex justify-end">
+                <button
+                    onClick={handleExportExcel}
+                    className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-sm font-medium"
+                >
+                    <Icon icon="lucide:download" className="w-4 h-4" />
+                    Exportar Pagos (Excel)
+                </button>
+            </div>
+
+            <div className="bg-surface rounded-xl shadow-sm border border-border overflow-hidden">
+                <div className="overflow-x-auto">
+                    <table className="w-full text-sm text-left">
+                        <thead className="bg-background border-b border-border text-text-muted font-medium">
+                            <tr>
+                                <th className="px-6 py-4">ID</th>
+                                <th className="px-6 py-4">Cliente</th>
+                                <th className="px-6 py-4">Monto ($)</th>
+                                <th className="px-6 py-4">Referencia</th>
+                                <th className="px-6 py-4">Método</th>
+                                <th className="px-6 py-4">Estado</th>
+                                <th className="px-6 py-4 text-right">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-border">
+                            {payments.map(payment => (
+                                <tr key={payment.id} className="hover:bg-surface-2 transition-colors">
+                                    <td className="px-6 py-4 font-medium text-text">#{payment.id}</td>
+                                    <td className="px-6 py-4 text-text">{payment.reserva_cliente}</td>
+                                    <td className="px-6 py-4 text-text font-bold">${parseFloat(payment.monto).toLocaleString()}</td>
+                                    <td className="px-6 py-4 text-text-muted font-mono">{payment.referencia}</td>
+                                    <td className="px-6 py-4 text-text">{payment.metodo_pago_nombre}</td>
+                                    <td className="px-6 py-4">
+                                        <span className={`px-2 py-1 rounded-full text-xs font-semibold uppercase ${payment.estado === 'verificado' ? 'bg-green-100 text-green-700' :
                                             payment.estado === 'rechazado' ? 'bg-red-100 text-red-700' :
                                                 'bg-yellow-100 text-yellow-700'
-                                        }`}>
-                                        {payment.estado}
-                                    </span>
-                                </td>
-                                <td className="px-6 py-4 text-right">
-                                    {payment.estado === 'pendiente' && (
-                                        <div className="flex justify-end gap-2">
-                                            <button
-                                                onClick={() => handleUpdateStatus(payment.id, 'verificado')}
-                                                disabled={actionLoading === payment.id}
-                                                className="p-1 px-3 bg-green-600 hover:bg-green-700 text-white rounded text-xs transition-colors"
-                                            >
-                                                Verificar
-                                            </button>
-                                            <button
-                                                onClick={() => handleUpdateStatus(payment.id, 'rechazado')}
-                                                disabled={actionLoading === payment.id}
-                                                className="p-1 px-3 bg-red-600 hover:bg-red-700 text-white rounded text-xs transition-colors"
-                                            >
-                                                Rechazar
-                                            </button>
-                                        </div>
-                                    )}
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                                            }`}>
+                                            {payment.estado}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4 text-right">
+                                        {payment.estado === 'pendiente' && (
+                                            <div className="flex justify-end gap-2">
+                                                <button
+                                                    onClick={() => handleUpdateStatus(payment.id, 'verificado')}
+                                                    disabled={actionLoading === payment.id}
+                                                    className="p-1 px-3 bg-green-600 hover:bg-green-700 text-white rounded text-xs transition-colors"
+                                                >
+                                                    Verificar
+                                                </button>
+                                                <button
+                                                    onClick={() => handleUpdateStatus(payment.id, 'rechazado')}
+                                                    disabled={actionLoading === payment.id}
+                                                    className="p-1 px-3 bg-red-600 hover:bg-red-700 text-white rounded text-xs transition-colors"
+                                                >
+                                                    Rechazar
+                                                </button>
+                                            </div>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     );

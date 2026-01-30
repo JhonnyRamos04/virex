@@ -390,19 +390,21 @@ const user = {
   function initProfileSettings() {
     const profileForm = document.getElementById('profile-form');
     const passwordForm = document.getElementById('password-form');
+    const API_BASE = 'http://localhost:8000';
+
+    const getAuthToken = () => {
+      return localStorage.getItem('authToken');
+    };
 
     // Profile form submission
     if (profileForm) {
       profileForm.addEventListener('submit', (e) => {
         e.preventDefault();
-
-        // In a real application, this would send data to an API
-
-        // Show success message
+        // Placeholder for profile update logic
         if (window.showToast) {
           window.showToast({
-            message: 'Profile updated successfully!',
-            variant: 'success',
+            message: 'Profile update functionality coming soon!',
+            variant: 'info',
             duration: 3000,
           });
         }
@@ -411,34 +413,78 @@ const user = {
 
     // Password form submission with validation
     if (passwordForm) {
-      passwordForm.addEventListener('submit', (e) => {
+      passwordForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
+        const currentPassword = (passwordForm.querySelector('#current-password') as HTMLInputElement).value;
         const newPassword = passwordForm.querySelector('#new-password') as HTMLInputElement;
         const confirmPassword = passwordForm.querySelector('#confirm-password') as HTMLInputElement;
 
         // Validate passwords match
         if (newPassword.value !== confirmPassword.value) {
-          confirmPassword.setCustomValidity('Passwords do not match');
+          confirmPassword.setCustomValidity('Las contraseñas no coinciden');
           confirmPassword.reportValidity();
           return;
         }
 
         confirmPassword.setCustomValidity('');
 
-        // In a real application, this would send data to an API
-
-        // Show success message
-        if (window.showToast) {
-          window.showToast({
-            message: 'Password updated successfully!',
-            variant: 'success',
-            duration: 3000,
-          });
+        const token = getAuthToken();
+        if (!token) {
+          if (window.showToast) {
+            window.showToast({
+              message: 'Sesión no válida. Por favor, inicia sesión de nuevo.',
+              variant: 'error',
+              duration: 3000,
+            });
+          }
+          return;
         }
 
-        // Reset form
-        (passwordForm as HTMLFormElement).reset();
+        try {
+          const response = await fetch(`${API_BASE}/auth/change-password/`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Token ${token}`
+            },
+            body: JSON.stringify({
+              current_password: currentPassword,
+              new_password: newPassword.value,
+              confirm_password: confirmPassword.value
+            })
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            if (window.showToast) {
+              window.showToast({
+                message: '¡Contraseña actualizada con éxito!',
+                variant: 'success',
+                duration: 3000,
+              });
+            }
+            (passwordForm as HTMLFormElement).reset();
+          } else {
+            if (window.showToast) {
+              window.showToast({
+                message: data.error || 'Error al actualizar la contraseña',
+                variant: 'error',
+                duration: 4000,
+              });
+            }
+          }
+        } catch (error) {
+          console.error('Network error:', error);
+          if (window.showToast) {
+            window.showToast({
+              message: 'Error de conexión con el servidor',
+              variant: 'error',
+              duration: 4000,
+            });
+          }
+        }
       });
 
       // Clear custom validity on input

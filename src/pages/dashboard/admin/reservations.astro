@@ -1,0 +1,32 @@
+---
+import DashboardLayout from '@/layouts/DashboardLayout.astro';
+import { AdminReservationManager } from '@/components/admin/AdminReservationManager';
+
+const breadcrumbs = [
+  { label: 'Panel', href: '/dashboard' },
+  { label: 'Admin', href: '/dashboard/admin' },
+  { label: 'Reservas' }
+];
+---
+
+<DashboardLayout
+  title="Gestión de Reservas"
+  description="Administra todas las reservas de los clientes."
+  breadcrumbs={breadcrumbs}
+>
+  <div class="admin-page">
+    <div class="page-header mb-8">
+      <h1 class="text-3xl font-bold text-text mb-2">Administración de Reservas</h1>
+      <p class="text-text-muted text-lg">Supervisa y cambia el estado de los viajes reservados.</p>
+    </div>
+
+    <AdminReservationManager client:only="react" />
+  </div>
+</DashboardLayout>
+
+<style>
+  .admin-page {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+</style>
