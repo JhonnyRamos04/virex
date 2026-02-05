@@ -150,31 +150,32 @@ const variantClasses = {
       submitBtn.textContent = 'Suscribiendo...';
 
       try {
-        const action = formEl.action;
+        // Submit to backend API
+        const response = await fetch('http://localhost:8000/api/newsletter/subscribe/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          body: JSON.stringify({ email }),
+        });
 
-        // If no action URL or same page, simulate success (demo mode)
-        if (!action || action === window.location.href) {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
+        const data = await response.json();
+
+        if (response.ok) {
+          // Success (201 Created or 200 Already Subscribed)
+          messageEl.textContent = data.message || successMessage;
+          messageEl.className = 'newsletter-message mt-3 text-sm text-green-600 dark:text-green-400';
+          emailInput.value = '';
         } else {
-          // Submit to actual endpoint
-          const response = await fetch(action, {
-            method: 'POST',
-            body: new FormData(formEl),
-            headers: {
-              Accept: 'application/json',
-            },
-          });
-
-          if (!response.ok) {
-            throw new Error('Subscription failed');
-          }
+          // Error response from server
+          messageEl.textContent = data.error || data.message || errorMessage;
+          messageEl.className = 'newsletter-message mt-3 text-sm text-red-600 dark:text-red-400';
         }
-
-        messageEl.textContent = successMessage;
-        messageEl.className = 'newsletter-message mt-3 text-sm text-green-600 dark:text-green-400';
-        emailInput.value = '';
-      } catch {
-        messageEl.textContent = errorMessage;
+      } catch (error) {
+        // Network error or server unreachable
+        console.error('Newsletter subscription error:', error);
+        messageEl.textContent = 'No se pudo conectar con el servidor. Por favor intenta más tarde.';
         messageEl.className = 'newsletter-message mt-3 text-sm text-red-600 dark:text-red-400';
       } finally {
         submitBtn.disabled = false;
@@ -183,3 +184,4 @@ const variantClasses = {
     });
   });
 </script>
+

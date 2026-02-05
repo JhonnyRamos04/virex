@@ -33,23 +33,23 @@ const user = {
 >
   <div class="settings-container">
     <div class="settings-header">
-      <h1 class="settings-title">Profile Settings</h1>
+      <h1 class="settings-title">Opciones de usuario</h1>
       <p class="settings-description">
-        Update your personal information and manage your account preferences.
+        Manega la opciones de usuario
       </p>
     </div>
 
     <div class="settings-content">
       <Card
-        title="Change Password"
-        description="Update your password to keep your account secure"
+        title="Cambiar contraseña"
+        description="manten tu contraseña actualizada "
         padding="lg"
       >
         <form class="settings-form" id="password-form">
           <!-- Current Password -->
           <div class="form-group">
             <label for="current-password" class="form-label">
-              Current Password
+              Contraseña Actual
               <span class="form-required">*</span>
             </label>
             <input
@@ -66,7 +66,7 @@ const user = {
           <!-- New Password -->
           <div class="form-group">
             <label for="new-password" class="form-label">
-              New Password
+              Nueva Contraseña
               <span class="form-required">*</span>
             </label>
             <input
@@ -79,13 +79,13 @@ const user = {
               autocomplete="new-password"
               minlength="8"
             />
-            <p class="form-hint">Must be at least 8 characters long.</p>
+            <p class="form-hint">8 caracteres minimo</p>
           </div>
 
           <!-- Confirm Password -->
           <div class="form-group">
             <label for="confirm-password" class="form-label">
-              Confirm New Password
+              Confirmar Contraseña Actual
               <span class="form-required">*</span>
             </label>
             <input
@@ -102,10 +102,10 @@ const user = {
         </form>
 
         <div slot="footer">
-          <button type="button" class="btn btn-ghost"> Cancel </button>
+          <button type="button" class="btn btn-ghost"> Cancelar </button>
           <button type="submit" form="password-form" class="btn btn-primary">
             <Icon name="lucide:lock" class="btn-icon" />
-            Update Password
+            Actualizar contraseña
           </button>
         </div>
       </Card>

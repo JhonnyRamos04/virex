@@ -148,7 +148,7 @@ export const ReservationList: React.FC = () => {
             {/* Quick Actions */}
             <div className="p-6 bg-background/50 border-t border-border">
                 <h3 className="text-base font-semibold text-text mb-4">Acciones Rápidas</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <a href="/dashboard/tourist-map" className="flex flex-col items-center gap-2 p-4 bg-surface border border-border rounded-lg hover:border-primary hover:text-primary hover:shadow-md transition-all text-text no-underline group">
                         <Icon icon="lucide:map" className="w-6 h-6 group-hover:scale-110 transition-transform" />
                         <span className="text-sm font-medium">Ver Mapa</span>
@@ -160,10 +160,6 @@ export const ReservationList: React.FC = () => {
                     <a href="/dashboard/payments" className="flex flex-col items-center gap-2 p-4 bg-surface border border-border rounded-lg hover:border-primary hover:text-primary hover:shadow-md transition-all text-text no-underline group">
                         <Icon icon="lucide:credit-card" className="w-6 h-6 group-hover:scale-110 transition-transform" />
                         <span className="text-sm font-medium">Ver Pagos</span>
-                    </a>
-                    <a href="/contact" className="flex flex-col items-center gap-2 p-4 bg-surface border border-border rounded-lg hover:border-primary hover:text-primary hover:shadow-md transition-all text-text no-underline group">
-                        <Icon icon="lucide:headphones" className="w-6 h-6 group-hover:scale-110 transition-transform" />
-                        <span className="text-sm font-medium">Soporte</span>
                     </a>
                 </div>
             </div>
